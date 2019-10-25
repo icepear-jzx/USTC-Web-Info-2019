@@ -1,0 +1,23 @@
+[
+    {
+        "bookName": "...",
+        "bookURL": "...",
+        "bookType": "...",
+        "shortRemark": [
+            {
+                "id": "...",
+                "content": "xxxxxx",
+                "starNumber": "5",
+                "usefulNumber": "177"
+            }
+        ],
+        "longRemark": [
+            {
+                "id": "...",
+                "content": "xxxxxx",
+                "starNumber": "5",
+                "usefulNumber": "177/9"
+            }
+        ]
+    }
+]
