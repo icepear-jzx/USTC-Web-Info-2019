@@ -12,9 +12,10 @@ headers = [
 ]
 
 
-def get_html(url):
+def get_html(url, sleep=True):
     html = None
-    time.sleep(random.random())
+    if sleep:
+        time.sleep(random.random())
 
     try:
         print('Get:', url)
@@ -55,9 +56,11 @@ def get_top250_detail():
 
     for book in books:
         # get bookType
-        html = None
+        html = get_html(book['bookURL'])
         while not html:
-            html = get_html(book['bookURL'])
+            print('Get', book['bookName'], 'Error!', 'URL:', book['bookURL'])
+            input('Input Enter to continue:')
+            continue
         selector = etree.HTML(html)
         book['bookType'] = selector.xpath(
             '//div[@id="db-tags-section"]/div/span/a/text()')
@@ -115,8 +118,8 @@ def get_top250_detail():
                 '//div[@class="paginator"]/span[@class="next"]/a/@href')
             ids = selector.xpath(
                 '//header[@class="main-hd"]/a[@class="name"]/text()')
-            urls = selector.xpath(
-                '//div[@class="main-bd"]/h2/a/@href')
+            review_ids = selector.xpath(
+                '//div[@class="review-list  "]/div/@data-cid')
             starClasses = selector.xpath(
                 '//header[@class="main-hd"]/span[1]/@class')
             starNumbers = [starClass.split()[0][-2]
@@ -125,17 +128,14 @@ def get_top250_detail():
                 '//div[@class="main-bd"]//a[@class="action-btn up"]/span/text()')
             downNumbers = selector.xpath(
                 '//div[@class="main-bd"]//a[@class="action-btn down"]/span/text()')
-            # print(ids, upNumbers, downNumbers)
+
             contents = []
-            for url in urls:
+            for review_id in review_ids:
                 review = None
                 while not review:
-                    review = get_html(url)
-                selector = etree.HTML(review)
-                content = selector.xpath(
-                    """//div[@id="link-report"]/div[@class="review-content clearfix"]/text()|
-                    //div[@id="link-report"]/div[@class="review-content clearfix"]/p/text()""")
-                contents.append(content)
+                    review = get_html("https://book.douban.com/j/review/" + review_id + "/full", sleep=False)
+                review = json.loads(review)
+                contents.append(review["html"])
 
             for j in range(len(ids)):
                 book['longRemark'].append(
