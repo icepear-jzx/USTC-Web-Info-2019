@@ -20,7 +20,7 @@ def get_html(url, sleep=True):
     try:
         print('Get:', url)
         req = urllib.request.Request(url, headers=random.choice(headers))
-        html = urllib.request.urlopen(req).read().decode()
+        html = urllib.request.urlopen(req, timeout=3).read().decode()
         print('Success:', url)
     except:
         print('Error:', url)
@@ -48,6 +48,9 @@ def get_top250_url():
 
     with open('top250-url.json', 'w') as f:
         json.dump(data, f, indent=4)
+    
+    with open('top250-url-gbk.json', 'w') as f:
+        json.dump(books, f, indent=4, ensure_ascii=False)
 
 
 def get_top250_detail():
@@ -57,10 +60,14 @@ def get_top250_detail():
     for book in books:
         # get bookType
         html = get_html(book['bookURL'])
-        while not html:
+        if not html:
             print('Get', book['bookName'], 'Error!', 'URL:', book['bookURL'])
-            input('Input Enter to continue:')
-            continue
+            print('Retry:', book['bookURL'])
+            html = get_html(book['bookURL'])
+            if not html:
+                print('Retry Error!', 'URL:', book['bookURL'])
+                input('Input Enter to continue:')
+                continue
         selector = etree.HTML(html)
         book['bookType'] = selector.xpath(
             '//div[@id="db-tags-section"]/div/span/a/text()')
@@ -152,9 +159,12 @@ def get_top250_detail():
     with open('top250-detail.json', 'w') as f:
         json.dump(books, f, indent=4)
 
+    with open('top250-detail-gbk.json', 'w') as f:
+        json.dump(books, f, indent=4, ensure_ascii=False)
 
-get_top250_detail()
-# f = open('top250-detail.json', 'r')
-# books = json.loads(f.read())
+
+# get_top250_detail()
+# with open('top250-url.json', 'r') as f:
+#     books = json.loads(f.read())
 # print(books[0])
 # get_top250_url()
