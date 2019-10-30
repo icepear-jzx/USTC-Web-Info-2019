@@ -4,6 +4,7 @@ import time
 from lxml import etree
 import json
 import socket
+from multiprocessing import Process, Queue
 
 
 headers = [
@@ -159,9 +160,68 @@ def get_top250_detail():
         json.dump(books, f, indent=4, ensure_ascii=False)
 
 
+def get_tag50_url(books_dict, books_list, tag, max_book_num):
+    for i in range(0, 1000, 20):
+        url = 'https://book.douban.com' + urllib.parse.quote(tag) + '?start={}'.format(i)
+        html = get_html(url)
+        if not html:
+            continue
+        selector = etree.HTML(html)
+        names = selector.xpath('//li[@class="subject-item"]/div[@class="info"]/h2/a/@title')
+        urls = selector.xpath('//li[@class="subject-item"]/div[@class="info"]/h2/a/@href')
+        ids = [url[-9:-1] for url in urls]
+        for j in range(len(ids)):
+            if ids[j] not in books_dict:
+                books_dict[ids[j]] = (names[j], urls[j])
+                books_list.append({'bookName': names[j], 'bookURL': urls[j]})
+        print('Book Num:', len(books_list))
+        if len(books_list) > max_book_num:
+            break
+
+
+def get_all_url(max_book_num=10000):
+    books_list = []
+    books_dict = {}
+
+    # tags
+    html = get_html('https://book.douban.com/tag/?view=cloud')
+    selector = etree.HTML(html)
+    tags = selector.xpath('//table[@class="tagCol"]//td/a/@href')
+    for tag in tags:
+        get_tag50_url(books_dict, books_list, tag, max_book_num=max_book_num)
+        if len(books_list) > max_book_num:
+            break
+
+    # similar books
+    i = 0
+    while i < len(books_list) and len(books_list) <= max_book_num:
+        print('Book Num:', len(books_list), 'Now:', i + 1)
+        book = books_list[i]
+        i += 1
+        html = get_html(book['bookURL'])
+        if not html:
+            print('Get', book['bookName'], 'Error!', 'URL:', book['bookURL'])
+            continue
+        selector = etree.HTML(html)
+        names = selector.xpath('//div[@id="db-rec-section"]//dl/dd/a/text()')
+        urls = selector.xpath('//div[@id="db-rec-section"]//dl/dd/a/@href')
+        ids = [url[-9:-1] for url in urls]
+        for j in range(len(ids)):
+            if ids[j] not in books_dict:
+                books_dict[ids[j]] = (names[j], urls[j])
+                books_list.append({'bookName': names[j], 'bookURL': urls[j]})
+    
+    with open('all-url.json', 'w') as f:
+        json.dump(books_list, f, indent=4)
+    
+    with open('all-url-gbk.json', 'w') as f:
+        json.dump(books_list, f, indent=4, ensure_ascii=False)
+            
+        
 # get_top250_url()
 # get_top250_detail()
 # with open('top250-url.json', 'r') as f:
 #     books = json.loads(f.read())
 # print(books[0])
+get_all_url(max_book_num=1000)
 
