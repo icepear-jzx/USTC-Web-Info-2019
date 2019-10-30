@@ -3,6 +3,7 @@ import random
 import time
 from lxml import etree
 import json
+import socket
 
 
 headers = [
@@ -14,6 +15,7 @@ headers = [
 
 def get_html(url, sleep=True):
     html = None
+
     if sleep:
         time.sleep(random.random())
 
@@ -21,9 +23,14 @@ def get_html(url, sleep=True):
         print('Get:', url)
         req = urllib.request.Request(url, headers=random.choice(headers))
         html = urllib.request.urlopen(req, timeout=3).read().decode()
-        print('Success:', url)
-    except:
+    except socket.timeout:
+        print('Timeout:', url)
+        print('Retry:', url)
+        html = get_html(url)
+    except urllib.error.HTTPError:
         print('Error:', url)
+    else:
+        print('Success:', url)
     
     return html
 
@@ -34,9 +41,9 @@ def get_top250_url():
     for i in range(0, 250, 25):
         url = "https://book.douban.com/top250?start={}".format(i)
 
-        html = None
-        while not html:
-            html = get_html(url)
+        html = get_html(url)
+        if not html:
+            continue
 
         selector = etree.HTML(html)
         names = selector.xpath('//div[@class="pl2"]/a/@title')
@@ -50,7 +57,7 @@ def get_top250_url():
         json.dump(data, f, indent=4)
     
     with open('top250-url-gbk.json', 'w') as f:
-        json.dump(books, f, indent=4, ensure_ascii=False)
+        json.dump(data, f, indent=4, ensure_ascii=False)
 
 
 def get_top250_detail():
@@ -62,12 +69,7 @@ def get_top250_detail():
         html = get_html(book['bookURL'])
         if not html:
             print('Get', book['bookName'], 'Error!', 'URL:', book['bookURL'])
-            print('Retry:', book['bookURL'])
-            html = get_html(book['bookURL'])
-            if not html:
-                print('Retry Error!', 'URL:', book['bookURL'])
-                input('Input Enter to continue:')
-                continue
+            continue
         selector = etree.HTML(html)
         book['bookType'] = selector.xpath(
             '//div[@id="db-tags-section"]/div/span/a/text()')
@@ -76,9 +78,7 @@ def get_top250_detail():
         book['shortRemark'] = []
         i = 1
         while True:
-            shortRemarks = None
-            while not shortRemarks:
-                shortRemarks = get_html(book['bookURL'] + 'comments/hot?p={}'.format(i))
+            shortRemarks = get_html(book['bookURL'] + 'comments/hot?p={}'.format(i))
             selector = etree.HTML(shortRemarks)
             ids = selector.xpath(
                 '//div[@class="comment"]//span[@class="comment-info"]/a/text()')
@@ -117,9 +117,7 @@ def get_top250_detail():
         book['longRemark'] = []
         i = 0
         while True:
-            longRemarks = None
-            while not longRemarks:
-                longRemarks = get_html(book['bookURL'] + 'reviews?start={}'.format(i))
+            longRemarks = get_html(book['bookURL'] + 'reviews?start={}'.format(i))
             selector = etree.HTML(longRemarks)
             nextButton = selector.xpath(
                 '//div[@class="paginator"]/span[@class="next"]/a/@href')
@@ -138,9 +136,7 @@ def get_top250_detail():
 
             contents = []
             for review_id in review_ids:
-                review = None
-                while not review:
-                    review = get_html("https://book.douban.com/j/review/" + review_id + "/full", sleep=False)
+                review = get_html("https://book.douban.com/j/review/" + review_id + "/full", sleep=False)
                 review = json.loads(review)
                 contents.append(review["html"])
 
@@ -154,7 +150,7 @@ def get_top250_detail():
             else:
                 break
         
-        print('Finish: book', books.index(book))
+        print('Finish: No.', books.index(book) + 1, book['bookName'])
 
     with open('top250-detail.json', 'w') as f:
         json.dump(books, f, indent=4)
@@ -163,8 +159,9 @@ def get_top250_detail():
         json.dump(books, f, indent=4, ensure_ascii=False)
 
 
+# get_top250_url()
 # get_top250_detail()
 # with open('top250-url.json', 'r') as f:
 #     books = json.loads(f.read())
 # print(books[0])
-# get_top250_url()
+
