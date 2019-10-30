@@ -4,7 +4,7 @@ import time
 from lxml import etree
 import json
 import socket
-from multiprocessing import Process, Queue
+import multiprocessing as mp
 
 
 headers = [
@@ -14,11 +14,11 @@ headers = [
 ]
 
 
-def get_html(url, sleep=True):
+def get_html(url, sleep=True, sleep_time=1):
     html = None
 
     if sleep:
-        time.sleep(random.random())
+        time.sleep(random.random() * sleep_time)
 
     try:
         print('Get:', url)
@@ -163,13 +163,14 @@ def get_top250_detail():
 def get_tag50_url(books_dict, books_list, tag, max_book_num):
     for i in range(0, 1000, 20):
         url = 'https://book.douban.com' + urllib.parse.quote(tag) + '?start={}'.format(i)
-        html = get_html(url)
+        html = get_html(url, sleep_time=5)
         if not html:
             continue
         selector = etree.HTML(html)
         names = selector.xpath('//li[@class="subject-item"]/div[@class="info"]/h2/a/@title')
         urls = selector.xpath('//li[@class="subject-item"]/div[@class="info"]/h2/a/@href')
         ids = [url[-9:-1] for url in urls]
+        
         for j in range(len(ids)):
             if ids[j] not in books_dict:
                 books_dict[ids[j]] = (names[j], urls[j])
@@ -180,17 +181,20 @@ def get_tag50_url(books_dict, books_list, tag, max_book_num):
 
 
 def get_all_url(max_book_num=10000):
-    books_list = []
-    books_dict = {}
+    manager = mp.Manager()
+    books_list = manager.list()
+    books_dict = manager.dict()
+    jobs = []
 
     # tags
     html = get_html('https://book.douban.com/tag/?view=cloud')
     selector = etree.HTML(html)
     tags = selector.xpath('//table[@class="tagCol"]//td/a/@href')
-    for tag in tags:
-        get_tag50_url(books_dict, books_list, tag, max_book_num=max_book_num)
-        if len(books_list) > max_book_num:
-            break
+    args = [(books_dict, books_list, tag, max_book_num) for tag in tags]
+    pool = mp.Pool(3)
+    pool.map_async(get_tag50_url, args)
+    pool.close()
+    pool.join()
 
     # similar books
     i = 0
@@ -211,6 +215,7 @@ def get_all_url(max_book_num=10000):
                 books_dict[ids[j]] = (names[j], urls[j])
                 books_list.append({'bookName': names[j], 'bookURL': urls[j]})
     
+    books_list = [book for book in books_list]
     with open('all-url.json', 'w') as f:
         json.dump(books_list, f, indent=4)
     
