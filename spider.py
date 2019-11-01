@@ -15,18 +15,35 @@ headers = [
 
 
 def get_html(url, sleep=True, proxy=None):
+    """
+    Input url to get HTML.
+    Return HTML(str) or None.
+    Set sleep=False to skip over sleep step.
+    (Default sleep time is 0 ~ 1s)
+    Set proxy={"https": "X.X.X.X:XXXX"} to specify a proxy.
+    For example, set proxy={} to disable proxy.
+    """
     html = None
     put_back = False
 
     if sleep:
         time.sleep(random.random())
 
+    # If proxy is not specified, pop the first proxy in proxy_list.
+    # This proxy will be added back to proxy_list.
     if not proxy:
         while len(proxy_list) == 0:
             pass
         proxy = proxy_list.pop(0)
         put_back = True
 
+    # If get an exception, try again.
+    # If get HTTPError, there are two cases:
+    #   1. The URL doesn't exist (it's possible).
+    #   In this case, try again.
+    #   2. The proxy is not available any more.
+    #   In this case, delete this proxy and try again.
+    # To distinguish the two cases, get https://book.douban.com/ to test.
     try:
         # print('Get:', url)
         httpproxy_handler = urllib.request.ProxyHandler(proxy)
@@ -62,6 +79,9 @@ def get_html(url, sleep=True, proxy=None):
 
 
 def get_top250_url():
+    """
+    Get Top250 books' URLs and save in top250-url.json.
+    """
     data = []
 
     for i in range(0, 250, 25):
@@ -84,11 +104,14 @@ def get_top250_url():
 
 
 def get_book_detail(args):
+    """
+    Get single book's details(bookType, shortRemark, longRemark).
+    """
     books, index, max_shortRemark_page, max_longRemark_page = args
 
     print('Start: No.', index + 1, books[index]['bookName'])
 
-    # get bookType
+    # Get bookType.
     html = get_html(books[index]['bookURL'])
     if not html:
         print('Get', books[index]['bookName'], 'Error!', 'URL:', books[index]['bookURL'])
@@ -97,7 +120,7 @@ def get_book_detail(args):
     books[index]['bookType'] = selector.xpath(
         '//div[@id="db-tags-section"]/div/span/a/text()')
     
-    # get shortRemark
+    # Get shortRemark.
     shortRemark_list = []
     i = 1
     while True:
@@ -144,7 +167,7 @@ def get_book_detail(args):
 
     books[index]['shortRemark'] = shortRemark_list
     
-    # get longRemark
+    # Get longRemark.
     longRemark_list = []
     i = 0
     while True:
@@ -205,6 +228,12 @@ def get_book_detail(args):
 
 
 def get_top250_detail(max_shortRemark_page=1, max_longRemark_page=1):
+    """
+    Load top250-url.json.
+    Get Top250 books' details.
+    20 processes in parallel.
+    Save in top250-detail.json.
+    """
     with open('top250-url.json', 'r') as f:
         books = json.loads(f.read())
     books = manager.list([manager.dict(book) for book in books])
@@ -214,16 +243,20 @@ def get_top250_detail(max_shortRemark_page=1, max_longRemark_page=1):
     pool.close()
     pool.join()
 
-    # for book in books:
-    #     for key, value in book.items():
-    #         print(key, value)
-
     books = [{key: value for key, value in book.items()} for book in books]
     with open('top250-detail.json', 'w') as f:
         json.dump(books, f, indent=4, ensure_ascii=False)
 
 
 def get_tag50_url(args):
+    """
+    Get all books' URL in this tag.
+    There are only 50 pages showed in single tag, 
+    see https://book.douban.com/tag/%E5%A4%96%E5%9B%BD%E6%96%87%E5%AD%A6?start=980
+    and https://book.douban.com/tag/%E5%A4%96%E5%9B%BD%E6%96%87%E5%AD%A6?start=1000 .
+    The latter doesn't show any books' information.
+    Thus we can only get 1000 books' URL in one tag.
+    """
     books_dict, books_list, tag, max_book_num = args
     for i in range(0, 1000, 20):
         if len(books_list) > max_book_num:
@@ -245,6 +278,10 @@ def get_tag50_url(args):
 
 
 def get_similar_url(args):
+    """
+    In any book's page, there are some similar books recommended to readers.
+    Get their URL and add to books_list and books_dict.
+    """
     book, books_dict, books_list = args
     html = get_html(book['bookURL'])
     if not html:
@@ -261,6 +298,13 @@ def get_similar_url(args):
 
 
 def get_all_url(max_book_num=10000):
+    """
+    Get all books' URL in douban.
+    Get all tags from https://book.douban.com/tag/?view=cloud .
+    Use get_tag50_url() to get 1000 books in this tag.
+    If the number of all these books is less than max_book_num,
+    use get_similar_url() to get more.
+    """
     books_list = manager.list()
     books_dict = manager.dict()
 
@@ -293,7 +337,7 @@ if __name__ == "__main__":
     with open('proxies.json', 'r') as f:
         proxy_list = json.loads(f.read())
     proxy_list = manager.list(proxy_list)
-    # get_top250_url()
-    # get_top250_detail()
+    get_top250_url()
+    get_top250_detail(max_shortRemark_page=1, max_longRemark_page=1)
     get_all_url(max_book_num=20000)
 
