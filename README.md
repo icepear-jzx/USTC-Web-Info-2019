@@ -28,6 +28,9 @@ $ pip3 install lxml --user
 
 ### Usage
 
+Take about 40 minutes totally depending on the quality of proxies.
+(Suggest testing at midnight.)
+
 #### 1. Buy proxies
 
 Buy proxies from [虎头代理](http://ip.hutoudaili.com). 

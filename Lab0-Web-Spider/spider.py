@@ -32,10 +32,14 @@ def get_html(url, sleep=True, proxy=None):
     # If proxy is not specified, pop the first proxy in proxy_list.
     # This proxy will be added back to proxy_list.
     if not proxy:
-        while len(proxy_list) == 0:
-            pass
-        proxy = proxy_list.pop(0)
-        put_back = True
+        while True:
+            try:
+                proxy = proxy_list.pop(0)
+            except:
+                continue
+            else:
+                put_back = True
+                break
 
     # If get an exception, try again.
     # If get HTTPError, there are two cases:
@@ -59,17 +63,8 @@ def get_html(url, sleep=True, proxy=None):
             html = get_html(url, sleep=False)
             print('Delete:', proxy)
             put_back = False
-    except socket.timeout:
-        # print('Timeout:', url)
-        # print('Retry:', url)
-        html = get_html(url, sleep=False)
-    except urllib.error.URLError:
-        # print('Timeout:', url)
-        # print('Retry:', url)
-        html = get_html(url, sleep=False)
-    except:
-        # print('Error:', proxy)
-        # print('Retry:', url)
+    except Exception as e:
+        # print(e, proxy, url)
         html = get_html(url, sleep=False)
     else:
         # print('Success:', url)
@@ -194,23 +189,17 @@ def get_book_detail(args):
         starNumbers = [starClass.split()[0][-2]
                         for starClass in starClasses]
 
-        while len(proxy_list) == 0:
-            pass
-        proxy = proxy_list.pop(0)
         contents = [""] * len(ids)
         upNumbers = [0] * len(ids)
         downNumbers = [0] * len(ids)
         for review_id in review_ids:
-            review = get_html("https://book.douban.com/j/review/" + review_id + "/full", sleep=False, proxy=proxy)
+            review = get_html("https://book.douban.com/j/review/" + review_id + "/full", sleep=False)
             while not review:
-                proxy_list.append(proxy)
-                proxy = proxy_list.pop(0)
-                review = get_html("https://book.douban.com/j/review/" + review_id + "/full", sleep=False, proxy=proxy)
+                review = get_html("https://book.douban.com/j/review/" + review_id + "/full", sleep=False)
             review = json.loads(review)
             contents[review_ids.index(review_id)] = review["html"]
             upNumbers[review_ids.index(review_id)] = review["votes"]["useful_count"]
             downNumbers[review_ids.index(review_id)] = review["votes"]["useless_count"]
-        proxy_list.append(proxy)
         
         for j in range(len(ids)):
             try:
@@ -225,7 +214,6 @@ def get_book_detail(args):
         else:
             break
         
-    
     books[index]['longRemark'] = longRemark_list
     
     print('Finish: No.', index + 1, books[index]['bookName'], 'Proxies Remain:', len(proxy_list))
