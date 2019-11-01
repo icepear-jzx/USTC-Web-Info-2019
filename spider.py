@@ -337,7 +337,7 @@ if __name__ == "__main__":
     with open('proxies.json', 'r') as f:
         proxy_list = json.loads(f.read())
     proxy_list = manager.list(proxy_list)
-    get_top250_url()
+    # get_top250_url()
     get_top250_detail(max_shortRemark_page=1, max_longRemark_page=1)
     get_all_url(max_book_num=20000)
 
