@@ -50,10 +50,6 @@ def get_html(url, sleep=True, proxy=None):
         opener = urllib.request.build_opener(httpproxy_handler)
         req = urllib.request.Request(url, headers=random.choice(headers))
         html = opener.open(req, timeout=5).read().decode()
-    except socket.timeout or urllib.error.URLError:
-        # print('Timeout:', url)
-        # print('Retry:', url)
-        html = get_html(url, sleep=False)
     except urllib.error.HTTPError:
         print('HTTPError:', url)
         try:
@@ -63,6 +59,14 @@ def get_html(url, sleep=True, proxy=None):
             html = get_html(url, sleep=False)
             print('Delete:', proxy)
             put_back = False
+    except socket.timeout:
+        # print('Timeout:', url)
+        # print('Retry:', url)
+        html = get_html(url, sleep=False)
+    except urllib.error.URLError:
+        # print('Timeout:', url)
+        # print('Retry:', url)
+        html = get_html(url, sleep=False)
     except:
         # print('Error:', proxy)
         # print('Retry:', url)
@@ -250,12 +254,12 @@ def get_top250_detail(max_shortRemark_page=1, max_longRemark_page=1):
 
 def get_tag50_url(args):
     """
-    Get all books' URL in this tag.
-    There are only 50 pages showed in single tag, 
+    Get all books' URLs in this tag.
+    There are only 50 pages shown in single tag, 
     see https://book.douban.com/tag/%E5%A4%96%E5%9B%BD%E6%96%87%E5%AD%A6?start=980
     and https://book.douban.com/tag/%E5%A4%96%E5%9B%BD%E6%96%87%E5%AD%A6?start=1000 .
     The latter doesn't show any books' information.
-    Thus we can only get 1000 books' URL in one tag.
+    Thus we can only get 1000 books' URLs in one tag.
     """
     books_dict, books_list, tag, max_book_num = args
     for i in range(0, 1000, 20):
@@ -280,7 +284,7 @@ def get_tag50_url(args):
 def get_similar_url(args):
     """
     In any book's page, there are some similar books recommended to readers.
-    Get their URL and add to books_list and books_dict.
+    Get their URLs and add to books_list and books_dict.
     """
     book, books_dict, books_list = args
     html = get_html(book['bookURL'])
