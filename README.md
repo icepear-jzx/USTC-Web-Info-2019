@@ -6,7 +6,7 @@
 $ git clone git@github.com:IcePear-Jzx/USTC-Web-Info.git
 ```
 
-## Lab-0-Web-Spider
+## Lab0 Web Spider
 
 ### Problem
 
