@@ -3,7 +3,7 @@
 ## Download
 
 ```shell
-$ git clone git@github.com:IcePear-Jzx/USTC-Web-Info.git
+$ git clone https://github.com/IcePear-Jzx/USTC-Web-Info.git
 ```
 
 ## Lab0 Web Spider
