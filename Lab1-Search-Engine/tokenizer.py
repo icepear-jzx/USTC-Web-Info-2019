@@ -6,19 +6,29 @@ from tqdm import tqdm
 
 
 def pkuseg_tokenizer():
+    seg = pkuseg.pkuseg(postag=True)
+    stopword_tags = ['m', 'q', 'r', 'd', 'p', 'c', 'u', 'y', 'e', 'o', 'w']
+    stopword = ['~', '`', '!', '@', '#', '$', '%', '^', '&', '*',
+                '(', ')', '_', '-', '+', '=', '[', ']', '{', '}', '\\', '|',
+                ';', ':', '\'', '"', ',', '<', '>', '.', '/', '?'
+                ]
+
     data = pd.read_csv('Lab1-Search-Engine/Data/test_docs.csv')
     token_count = []
 
-    seg = pkuseg.pkuseg()
     for i, row in tqdm(list(data.iterrows())):
         if str(row['doc_title']) == 'nan' or str(row['content']) == 'nan':
             continue
         else:
-            text = seg.cut(row['doc_title'] + row['content'])
-        tokens = Counter(text)
+            tokens = seg.cut(row['doc_title'] + row['content'])
+
+        tokens = [token for token, tag in tokens 
+            if tag not in stopword_tags and token not in stopword]
+
+        tokens = Counter(tokens)
         token_count.append({
-            'doc_id': row['doc_id'], 
-            'doc_url': row['doc_url'], 
+            'doc_id': row['doc_id'],
+            'doc_url': row['doc_url'],
             'doc_title': row['doc_title'],
             'tokens': tokens
         })
@@ -29,10 +39,11 @@ def pkuseg_tokenizer():
     data = pd.read_csv('Lab1-Search-Engine/Data/test_querys.csv')
     token_count = []
 
-    seg = pkuseg.pkuseg()
     for i, row in tqdm(list(data.iterrows())):
-        text = seg.cut(row['query'])
-        tokens = Counter(text)
+        tokens = seg.cut(row['query'])
+        tokens = [token for token, tag in tokens 
+            if tag not in stopword_tags and token not in stopword]
+        tokens = Counter(tokens)
         token_count.append({
             'query_id': row['query_id'],
             'query': row['query'],
