@@ -3,6 +3,7 @@
 ## Download
 
 ```shell
+$ sudo apt-get install git-lfs
 $ git clone https://github.com/IcePear-Jzx/USTC-Web-Info.git
 ```
 
