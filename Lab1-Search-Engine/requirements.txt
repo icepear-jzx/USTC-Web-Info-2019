@@ -3,3 +3,4 @@ numpy
 lxml
 pkuseg
 tqdm
+scipy
