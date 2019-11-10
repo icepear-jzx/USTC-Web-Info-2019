@@ -5,3 +5,8 @@ Lab1-Search-Engine/Data/test_querys.csv filter=lfs diff=lfs merge=lfs -text
 Lab0-Web-Spider/all-url.json filter=lfs diff=lfs merge=lfs -text
 Lab0-Web-Spider/top250-detail.json filter=lfs diff=lfs merge=lfs -text
 Lab1-Search-Engine/Data/querys_token_pkuseg.json filter=lfs diff=lfs merge=lfs -text
+Lab1-Search-Engine/Data/idf.txt filter=lfs diff=lfs merge=lfs -text
+Lab1-Search-Engine/Data/tfidf.txt filter=lfs diff=lfs merge=lfs -text
+Lab1-Search-Engine/Data/tf.txt filter=lfs diff=lfs merge=lfs -text
+Lab1-Search-Engine/Data/word_indices.json filter=lfs diff=lfs merge=lfs -text
+Lab1-Search-Engine/Data/answer.csv filter=lfs diff=lfs merge=lfs -text
