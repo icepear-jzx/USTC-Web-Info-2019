@@ -20,58 +20,58 @@ def pkuseg_tokenizer():
     connect = [':', '.', '-']
     numbers = list('1234567890')
 
-    data = pd.read_csv('Lab1-Search-Engine/Data/test_docs.csv')
-    token_count = []
+    # data = pd.read_csv('Lab1-Search-Engine/Data/test_docs.csv')
+    # token_count = []
 
-    for i, row in tqdm(list(data.iterrows())):
-        if str(row['content']) == 'nan' and str(row['doc_title']) == 'nan':
-            continue
-        elif str(row['content']) == 'nan':
-            text = row['doc_title']
-        elif str(row['doc_title']) == 'nan':
-            text = row['content']
-        else:
-            text = row['doc_title'] * 10 + row['content']
+    # for i, row in tqdm(list(data.iterrows())):
+    #     if str(row['content']) == 'nan' and str(row['doc_title']) == 'nan':
+    #         continue
+    #     elif str(row['content']) == 'nan':
+    #         text = row['doc_title']
+    #     elif str(row['doc_title']) == 'nan':
+    #         text = row['content']
+    #     else:
+    #         text = row['doc_title'] * 10 + row['content']
         
-        text = list(text)
-        for j in range(len(text)):
-            if text[j] in english:
-                text[j] = text[j].lower()
-        j = 1
-        while j < len(text):
-            if text[j] in stopword:
-                try:
-                    if text[j] in connect and text[j-1] in numbers and text[j+1] in numbers:
-                        pass
-                    else:
-                        text[j] = ' '
-                except: text[j] = ' '
+    #     text = list(text)
+    #     for j in range(len(text)):
+    #         if text[j] in english:
+    #             text[j] = text[j].lower()
+    #     j = 1
+    #     while j < len(text):
+    #         if text[j] in stopword:
+    #             try:
+    #                 if text[j] in connect and text[j-1] in numbers and text[j+1] in numbers:
+    #                     pass
+    #                 else:
+    #                     text[j] = ' '
+    #             except: text[j] = ' '
             
-            if text[j] in english and text[j-1] not in english:
-                text.insert(j, ' ')
-                j += 1
-            elif text[j-1] in english and text[j] not in english:
-                text.insert(j, ' ')
-                j += 1
-            j += 1
+    #         if text[j] in english and text[j-1] not in english:
+    #             text.insert(j, ' ')
+    #             j += 1
+    #         elif text[j-1] in english and text[j] not in english:
+    #             text.insert(j, ' ')
+    #             j += 1
+    #         j += 1
 
-        text = ''.join(text)
+    #     text = ''.join(text)
 
-        tokens = seg.cut(text)
+    #     tokens = seg.cut(text)
 
-        tokens = [token for token, tag in tokens 
-            if tag not in stopword_tags and token not in stopword]
+    #     tokens = [token for token, tag in tokens 
+    #         if tag not in stopword_tags and token not in stopword]
 
-        tokens = Counter(tokens)
-        token_count.append({
-            'doc_id': row['doc_id'],
-            'doc_url': row['doc_url'],
-            'doc_title': row['doc_title'],
-            'tokens': tokens
-        })
+    #     tokens = Counter(tokens)
+    #     token_count.append({
+    #         'doc_id': row['doc_id'],
+    #         'doc_url': row['doc_url'],
+    #         'doc_title': row['doc_title'],
+    #         'tokens': tokens
+    #     })
 
-    with open('Lab1-Search-Engine/Data/docs_token_pkuseg.json', 'w') as f:
-        json.dump(token_count, f, indent=4, ensure_ascii=False)
+    # with open('Lab1-Search-Engine/Data/docs_token_pkuseg.json', 'w') as f:
+    #     json.dump(token_count, f, indent=4, ensure_ascii=False)
 
     data = pd.read_csv('Lab1-Search-Engine/Data/test_querys.csv')
     token_count = {}
@@ -79,6 +79,12 @@ def pkuseg_tokenizer():
     for i, row in tqdm(list(data.iterrows())):
         text = row['query']
         text = list(text)
+        if row['query_id'] == 'q370116':    # 朱自清
+            text.insert(3, ' ')
+        elif row['query_id'] == 'q262135':  # 家乡的桥课件
+            text.insert(4, ' ')
+        elif row['query_id'] == 'q23086':   # 清明节黑板报资料
+            text.append('手抄报')
         j = 1
         while j < len(text):
             if text[j] in stopword and text[j] not in connect:
