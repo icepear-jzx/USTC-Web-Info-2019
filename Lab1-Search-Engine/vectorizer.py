@@ -6,8 +6,8 @@ import pickle
 
 
 class Vectorizer:
-	def __init__(self, doc_file='Data/docs_token_pkuseg.json', 
-				query_file='Data/querys_token_pkuseg.json'):
+	def __init__(self, doc_file='Lab1-Search-Engine/Data/docs_token_pkuseg.json', 
+				query_file='Lab1-Search-Engine/Data/querys_token_pkuseg.json'):
 		self.doc_file = doc_file
 		self.query_file = query_file
 		self.docs = json.load(open(self.doc_file))
@@ -20,7 +20,7 @@ class Vectorizer:
 		self.tfidf = self.calculate_tfidf()
 
 
-	def create_word_indices(self, target_file='Data/word_indices.json', load=True):
+	def create_word_indices(self, target_file='Lab1-Search-Engine/Data/word_indices.json', load=True):
 		if load == True:
 			try: return json.load(open(target_file))
 			except: pass
@@ -59,7 +59,7 @@ class Vectorizer:
 		return coo_matrix((data, (positions, [0]*len(data))), shape=(vec_len, 1))
 
 
-	def calculate_idf(self, target_file='Data/idf.txt', load=True):
+	def calculate_idf(self, target_file='Lab1-Search-Engine/Data/idf.txt', load=True):
 		if load == True:
 			try: return None, np.loadtxt(target_file).reshape((-1, 1))
 			except: pass
@@ -79,7 +79,7 @@ class Vectorizer:
 		return df, idf
 
 
-	def calculate_tf(self, target_file='Data/tf.txt', load=True):
+	def calculate_tf(self, target_file='Lab1-Search-Engine/Data/tf.txt', load=True):
 		if load == True:
 			try: return pickle.load(open(target_file, 'rb'))
 			except: pass
@@ -93,7 +93,7 @@ class Vectorizer:
 		return tf
 
 	
-	def calculate_tfidf(self, target_file='Data/tfidf.txt', load=True):
+	def calculate_tfidf(self, target_file='Lab1-Search-Engine/Data/tfidf.txt', load=True):
 		if load == True:
 			try: return pickle.load(open(target_file, 'rb'))
 			except: pass

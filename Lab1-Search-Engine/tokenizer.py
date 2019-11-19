@@ -7,20 +7,57 @@ from tqdm import tqdm
 
 def pkuseg_tokenizer():
     seg = pkuseg.pkuseg(postag=True)
-    stopword_tags = ['m', 'q', 'r', 'd', 'p', 'c', 'u', 'y', 'e', 'o', 'w']
+    stopword_tags = []
+    # stopword_tags = ['m', 'q', 'r', 'd', 'p', 'c', 'u', 'y', 'e', 'o', 'w']
     stopword = ['~', '`', '!', '@', '#', '$', '%', '^', '&', '*',
                 '(', ')', '_', '-', '+', '=', '[', ']', '{', '}', '\\', '|',
-                ';', ':', '\'', '"', ',', '<', '>', '.', '/', '?'
-                ]
+                ';', ':', '\'', '"', ',', '<', '>', '.', '/', '?']
+    english = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
+                'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+                'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G',
+                'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
+                'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+    connect = [':', '.', '-']
+    numbers = list('1234567890')
 
     data = pd.read_csv('Lab1-Search-Engine/Data/test_docs.csv')
     token_count = []
 
     for i, row in tqdm(list(data.iterrows())):
-        if str(row['doc_title']) == 'nan' or str(row['content']) == 'nan':
+        if str(row['content']) == 'nan' and str(row['doc_title']) == 'nan':
             continue
+        elif str(row['content']) == 'nan':
+            text = row['doc_title']
+        elif str(row['doc_title']) == 'nan':
+            text = row['content']
         else:
-            tokens = seg.cut(row['doc_title'] + row['content'])
+            text = row['doc_title'] * 10 + row['content']
+        
+        text = list(text)
+        for j in range(len(text)):
+            if text[j] in english:
+                text[j] = text[j].lower()
+        j = 1
+        while j < len(text):
+            if text[j] in stopword:
+                try:
+                    if text[j] in connect and text[j-1] in numbers and text[j+1] in numbers:
+                        pass
+                    else:
+                        text[j] = ' '
+                except: text[j] = ' '
+            
+            if text[j] in english and text[j-1] not in english:
+                text.insert(j, ' ')
+                j += 1
+            elif text[j-1] in english and text[j] not in english:
+                text.insert(j, ' ')
+                j += 1
+            j += 1
+
+        text = ''.join(text)
+
+        tokens = seg.cut(text)
 
         tokens = [token for token, tag in tokens 
             if tag not in stopword_tags and token not in stopword]
@@ -37,18 +74,37 @@ def pkuseg_tokenizer():
         json.dump(token_count, f, indent=4, ensure_ascii=False)
 
     data = pd.read_csv('Lab1-Search-Engine/Data/test_querys.csv')
-    token_count = []
+    token_count = {}
 
     for i, row in tqdm(list(data.iterrows())):
-        tokens = seg.cut(row['query'])
+        text = row['query']
+        text = list(text)
+        j = 1
+        while j < len(text):
+            if text[j] in stopword and text[j] not in connect:
+                text[j] = ' '
+            if text[j] in english and text[j-1] not in english:
+                text[j] = text[j].lower()
+                text.insert(j, ' ')
+                j += 1
+            elif text[j-1] in english and text[j] not in english:
+                text[j-1] = text[j-1].lower()
+                text.insert(j, ' ')
+                j += 1
+            j += 1
+
+        text = ''.join(text)
+
+        tokens = seg.cut(text)
+
         tokens = [token for token, tag in tokens 
             if tag not in stopword_tags and token not in stopword]
         tokens = Counter(tokens)
-        token_count.append({
+        token_count[row['query_id']] = {
             'query_id': row['query_id'],
             'query': row['query'],
             'tokens': tokens
-        })
+        }
 
     with open('Lab1-Search-Engine/Data/querys_token_pkuseg.json', 'w') as f:
         json.dump(token_count, f, indent=4, ensure_ascii=False)

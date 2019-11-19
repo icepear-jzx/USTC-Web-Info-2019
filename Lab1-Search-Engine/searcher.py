@@ -8,8 +8,8 @@ from tqdm import tqdm
 
 
 class Searcher(Vectorizer):
-	def __init__(self, doc_file='Data/docs_token_pkuseg.json', 
-				query_file='Data/querys_token_pkuseg.json'):
+	def __init__(self, doc_file='Lab1-Search-Engine/Data/docs_token_pkuseg.json', 
+				query_file='Lab1-Search-Engine/Data/querys_token_pkuseg.json'):
 		super().__init__(doc_file=doc_file, query_file=query_file)
 		
 	
@@ -27,7 +27,8 @@ class Searcher(Vectorizer):
 		return [self.docs[i]['doc_id'] for i in idx[:20]], [self.docs[i]['doc_title'] for i in idx[:20]]
 
 	
-	def create_submission(self, org_file='Data/submission.csv', target_file='Data/answer.csv'):
+	def create_submission(self, org_file='Lab1-Search-Engine/Data/submission.csv', 
+							target_file='Lab1-Search-Engine/Data/submit.csv'):
 		question = pd.read_csv(org_file)
 		qids = question['query_id']
 		dids = []
@@ -36,7 +37,7 @@ class Searcher(Vectorizer):
 			dids += results
 		answer = pd.DataFrame()
 		answer['query_id'] = qids
-		answer['dic_id'] = dids
+		answer['doc_id'] = dids
 		answer.to_csv(target_file, index=False)
 
 
