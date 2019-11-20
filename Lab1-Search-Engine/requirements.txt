@@ -4,3 +4,4 @@ lxml
 pkuseg
 tqdm
 scipy
+jieba

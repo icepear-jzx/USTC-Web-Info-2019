@@ -5,9 +5,10 @@ import numpy as np
 import pickle
 
 
+
 class Vectorizer:
-	def __init__(self, doc_file='Lab1-Search-Engine/Data/docs_token_pkuseg.json', 
-				query_file='Lab1-Search-Engine/Data/querys_token_pkuseg.json'):
+	def __init__(self, doc_file='Lab1-Search-Engine/Data/docs_token_jieba.json', 
+				query_file='Lab1-Search-Engine/Data/querys_token_jieba.json'):
 		self.doc_file = doc_file
 		self.query_file = query_file
 		self.docs = json.load(open(self.doc_file))
@@ -20,7 +21,7 @@ class Vectorizer:
 		self.tfidf = self.calculate_tfidf()
 
 
-	def create_word_indices(self, target_file='Lab1-Search-Engine/Data/word_indices.json', load=True):
+	def create_word_indices(self, target_file='Lab1-Search-Engine/Data/word_indices.json', load=False):
 		if load == True:
 			try: return json.load(open(target_file))
 			except: pass
@@ -43,11 +44,18 @@ class Vectorizer:
 		return words
 
 
-	def doc2vec(self, doc=dict()):
+	# tfmode: 0 for logged division, 1 for log, 2 for division(ordinary way)
+	def doc2vec(self, doc=dict(), tfmode=1):
 		word_ind = self.word_ind
 		vec_len = self.vec_len
+		doc_word_num = sum(list(doc['tokens'].values()))
 		positions = [word_ind[word] for word in doc['tokens'].keys()]
-		data = [1 + np.math.log10(num) for num in doc['tokens'].values()]
+		if tfmode == 0:
+			data = [(1 + np.math.log10(num))/(0.01 + np.math.log10(doc_word_num)) for num in doc['tokens'].values()]
+		elif tfmode == 1:
+			data = [1 + np.math.log10(num) for num in doc['tokens'].values()]
+		else:
+			data = [num/doc_word_num for num in doc['tokens'].values()]
 		return coo_matrix((data, (positions, [0]*len(data))), shape=(vec_len, 1))
 
 
@@ -59,7 +67,7 @@ class Vectorizer:
 		return coo_matrix((data, (positions, [0]*len(data))), shape=(vec_len, 1))
 
 
-	def calculate_idf(self, target_file='Lab1-Search-Engine/Data/idf.txt', load=True):
+	def calculate_idf(self, target_file='Lab1-Search-Engine/Data/idf.txt', load=False):
 		if load == True:
 			try: return None, np.loadtxt(target_file).reshape((-1, 1))
 			except: pass
@@ -79,7 +87,7 @@ class Vectorizer:
 		return df, idf
 
 
-	def calculate_tf(self, target_file='Lab1-Search-Engine/Data/tf.txt', load=True):
+	def calculate_tf(self, target_file='Lab1-Search-Engine/Data/tf.txt', load=False):
 		if load == True:
 			try: return pickle.load(open(target_file, 'rb'))
 			except: pass
@@ -93,7 +101,7 @@ class Vectorizer:
 		return tf
 
 	
-	def calculate_tfidf(self, target_file='Lab1-Search-Engine/Data/tfidf.txt', load=True):
+	def calculate_tfidf(self, target_file='Lab1-Search-Engine/Data/tfidf.txt', load=False):
 		if load == True:
 			try: return pickle.load(open(target_file, 'rb'))
 			except: pass

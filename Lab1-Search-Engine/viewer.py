@@ -1,12 +1,12 @@
 import pandas as pd
 
+
 def compare():
     docs = pd.read_csv('Lab1-Search-Engine/Data/test_docs.csv')
     querys = pd.read_csv('Lab1-Search-Engine/Data/test_querys.csv')
 
-    submit2 = pd.read_csv('Lab1-Search-Engine/Data/submit3-0.749-0.831.csv')
-    submit1 = pd.read_csv('Lab1-Search-Engine/Data/submit.csv')
-    # submit2 = pd.read_csv('Lab1-Search-Engine/Data/submit2-0.696-0.780.csv')
+    submit1 = pd.read_csv('Lab1-Search-Engine/Data/submit7-jieba-0.812-0.883.csv')
+    submit2 = pd.read_csv('Lab1-Search-Engine/Data/submit.csv')
     # submit_fuse = submit1.copy()
 
     query_ids = submit1['query_id'].unique()
@@ -44,5 +44,6 @@ def view():
             print(doc, docs[docs['doc_id']==doc]['doc_title'].values)
             # print(docs[docs['doc_id']==doc]['content'].values[0])
         input()
+
 
 compare()
