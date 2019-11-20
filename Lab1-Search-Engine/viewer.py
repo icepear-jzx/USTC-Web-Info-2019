@@ -5,8 +5,8 @@ def compare():
     docs = pd.read_csv('Lab1-Search-Engine/Data/test_docs.csv')
     querys = pd.read_csv('Lab1-Search-Engine/Data/test_querys.csv')
 
-    submit1 = pd.read_csv('Lab1-Search-Engine/Data/submit7-jieba-0.812-0.883.csv')
-    submit2 = pd.read_csv('Lab1-Search-Engine/Data/submit.csv')
+    submit1 = pd.read_csv('Lab1-Search-Engine/Data/submit-fuse.csv')
+    submit2 = pd.read_csv('Lab1-Search-Engine/Data/submit7-jieba-0.812-0.883.csv')
     # submit_fuse = submit1.copy()
 
     query_ids = submit1['query_id'].unique()
@@ -33,7 +33,7 @@ def compare():
 def view():
     docs = pd.read_csv('Lab1-Search-Engine/Data/test_docs.csv')
     querys = pd.read_csv('Lab1-Search-Engine/Data/test_querys.csv')
-    submit1 = pd.read_csv('Lab1-Search-Engine/Data/submit.csv')
+    submit1 = pd.read_csv('Lab1-Search-Engine/Data/submit7-jieba-0.812-0.883.csv')
 
     query_ids = submit1['query_id'].unique()
 
@@ -47,3 +47,4 @@ def view():
 
 
 compare()
+
