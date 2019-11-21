@@ -5,7 +5,7 @@ def compare():
     docs = pd.read_csv('Lab1-Search-Engine/Data/test_docs.csv')
     querys = pd.read_csv('Lab1-Search-Engine/Data/test_querys.csv')
 
-    submit1 = pd.read_csv('Lab1-Search-Engine/Data/submit-fuse.csv')
+    submit1 = pd.read_csv('Lab1-Search-Engine/Data/submit.csv')
     submit2 = pd.read_csv('Lab1-Search-Engine/Data/submit7-jieba-0.812-0.883.csv')
     # submit_fuse = submit1.copy()
 

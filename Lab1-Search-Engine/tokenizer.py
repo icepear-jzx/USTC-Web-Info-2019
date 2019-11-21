@@ -4,6 +4,7 @@ from collections import Counter
 import json
 from tqdm import tqdm
 import jieba 
+import jieba.analyse
 
 
 def pkuseg_tokenizer():
@@ -206,7 +207,7 @@ def jieba_tokenizer():
         elif str(row['doc_title']) == 'nan':
             text = row['content']
         else:
-            text = row['doc_title'] * 10 + row['content']
+            text = row['doc_title'] * 100 + row['content']
         
         text = list(text)
         for j in range(len(text)):
@@ -282,6 +283,20 @@ def jieba_tokenizer():
             text.append(' ie ie ie ie')
         elif row['query_id'] == 'q365216':
             text.append(' 新颖')
+        elif row['query_id'] == 'q95275':
+            text.append(' gsm gsm gsm')
+        elif row['query_id'] == 'q400532':
+            text.append(' 王兆国 王兆国 王兆国')
+        elif row['query_id'] == 'q271732':
+            text.append(' 隐血 潜血')
+        elif row['query_id'] == 'q305643':
+            text.append('启示')
+        elif row['query_id'] == 'q70519':
+            text.append('创业构想规划书')
+        elif row['query_id'] == 'q459206':
+            text.append('溜冰')
+        elif row['query_id'] == 'q203684':
+            text.append('翻译')
 
         j = 1
         while j < len(text):
