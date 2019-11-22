@@ -19,5 +19,4 @@ The goal of this lab is to use web spider to get books' information from [Douban
 More details:
 [https://git.bdaa.pro/yxonic/data-specification/wikis/豆瓣%20书评](https://git.bdaa.pro/yxonic/data-specification/wikis/豆瓣%20书评)
 
-
 ## Lab1 Search Engine
