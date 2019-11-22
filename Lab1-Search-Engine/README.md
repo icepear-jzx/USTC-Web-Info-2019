@@ -9,6 +9,8 @@ each item has doc_id, doc_url, doc_title and content.
 each item has query and query_id.
 * Submission format is shown in [submission.csv](./Data/submission.csv).
 
+More details: [http://staff.ustc.edu.cn/~tongxu/webinfo/slides/exp1.pdf](http://staff.ustc.edu.cn/~tongxu/webinfo/slides/exp1.pdf)
+
 ## Installation
 
 You have to be in the root directory of this repository. And then run:
