@@ -5,9 +5,10 @@ import json
 from tqdm import tqdm
 import jieba 
 import jieba.analyse
+import argparse
 
 
-def pkuseg_tokenizer():
+def pkuseg_tokenizer(title_weight=10):
     seg = pkuseg.pkuseg(postag=True)
     stopword_tags = []
     # stopword_tags = ['m', 'q', 'r', 'd', 'p', 'c', 'u', 'y', 'e', 'o', 'w']
@@ -33,7 +34,7 @@ def pkuseg_tokenizer():
         elif str(row['doc_title']) == 'nan':
             text = row['content']
         else:
-            text = row['doc_title'] * 10 + row['content']
+            text = row['doc_title'] * title_weight + row['content']
         
         text = list(text)
         for j in range(len(text)):
@@ -122,7 +123,7 @@ def pkuseg_tokenizer():
         json.dump(token_count, f, indent=4, ensure_ascii=False)
 
 
-def jieba_tokenizer():
+def jieba_tokenizer(title_weight=10):
     jieba.add_word('道聚城')
     jieba.add_word('枪神纪')
     jieba.add_word('朱自清')
@@ -207,7 +208,7 @@ def jieba_tokenizer():
         elif str(row['doc_title']) == 'nan':
             text = row['content']
         else:
-            text = row['doc_title'] * 100 + row['content']
+            text = row['doc_title'] * title_weight + row['content']
         
         text = list(text)
         for j in range(len(text)):
@@ -330,5 +331,16 @@ def jieba_tokenizer():
 
 
 if __name__ == "__main__":
-    # pkuseg_tokenizer()
-    jieba_tokenizer()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--model','-m', required = True, choices=['pkuseg', 'jieba'])
+    parser.add_argument('--weight','-w', type=int)
+    args = parser.parse_args()
+    if args.weight:
+        title_weight = max([1, args.weight])
+        print(title_weight)
+    else:
+        title_weight = 10
+    if args.model == 'pkuseg':
+        pkuseg_tokenizer(title_weight)
+    else:
+        jieba_tokenizer(title_weight)
