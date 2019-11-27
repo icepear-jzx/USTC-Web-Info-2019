@@ -15,18 +15,18 @@ def compare():
         print(n, querys[querys['query_id']==query_id]['query'].values[0])
         docs1 = submit1[submit1['query_id']==query_id]['doc_id'].tolist()
         docs2 = submit2[submit2['query_id']==query_id]['doc_id'].tolist()
-        # docs1_diff = []
-        # docs2_diff = []
-        for i in range(20):
-            print(docs1[i], docs2[i])
-        # for doc in docs1:
-        #     if doc not in docs2:
-        #         # docs1_diff.append(doc)
-        #         print('submit1:', doc, docs[docs['doc_id']==doc]['doc_title'])
-        # for doc in docs2:
-        #     if doc not in docs1:
-        #         # docs2_diff.append(doc)
-        #         print('submit2:', doc, docs[docs['doc_id']==doc]['doc_title'])
+        docs1_diff = []
+        docs2_diff = []
+        # for i in range(20):
+        #     print(docs1[i], docs2[i])
+        for doc in docs1:
+            if doc not in docs2:
+                # docs1_diff.append(doc)
+                print('submit1:', doc, docs[docs['doc_id']==doc]['doc_title'])
+        for doc in docs2:
+            if doc not in docs1:
+                # docs2_diff.append(doc)
+                print('submit2:', doc, docs[docs['doc_id']==doc]['doc_title'])
         choice = input()
         # if choice == '2':
         #     submit_fuse[submit_fuse['query_id']==query_id] = submit2[submit2['query_id']==query_id]

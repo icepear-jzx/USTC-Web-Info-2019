@@ -54,8 +54,10 @@ class Vectorizer:
 			data = [(1 + np.math.log10(num))/(0.01 + np.math.log10(doc_word_num)) for num in doc['tokens'].values()]
 		elif tfmode == 1:
 			data = [1 + np.math.log10(num) for num in doc['tokens'].values()]
-		else:
+		elif tfmode == 2:
 			data = [num/doc_word_num for num in doc['tokens'].values()]
+		else:
+			data = [1 + num for num in doc['tokens'].values()]
 		return coo_matrix((data, (positions, [0]*len(data))), shape=(vec_len, 1))
 
 

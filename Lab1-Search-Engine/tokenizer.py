@@ -201,12 +201,8 @@ def jieba_tokenizer(title_weight=10):
     token_count = []
 
     for i, row in tqdm(list(data.iterrows())):
-        if str(row['content']) == 'nan' and str(row['doc_title']) == 'nan':
+        if str(row['content']) == 'nan' or str(row['doc_title']) == 'nan':
             continue
-        elif str(row['content']) == 'nan':
-            text = row['doc_title']
-        elif str(row['doc_title']) == 'nan':
-            text = row['content']
         else:
             text = row['doc_title'] * title_weight + row['content']
         
@@ -233,7 +229,7 @@ def jieba_tokenizer(title_weight=10):
             j += 1
 
         text = ''.join(text)
-
+    
         tokens = jieba.lcut_for_search(text)
 
         tokens = [token for token in tokens if token not in stopword]
@@ -249,10 +245,15 @@ def jieba_tokenizer(title_weight=10):
     with open('Lab1-Search-Engine/Data/docs_token_jieba.json', 'w') as f:
         json.dump(token_count, f, indent=4, ensure_ascii=False)
 
+    spider = json.loads(open('Lab1-Search-Engine/Data/querys_spider.json').read())
     data = pd.read_csv('Lab1-Search-Engine/Data/test_querys.csv')
     token_count = {}
 
     for i, row in tqdm(list(data.iterrows())):
+        # if row['query_id'] in spider:
+        #     text = spider[row['query_id']]
+        #     text = list(text)
+        # else:
         text = row['query']
         text = list(text)
         if row['query_id'] == 'q23086':   # 清明节黑板报资料
@@ -299,16 +300,18 @@ def jieba_tokenizer(title_weight=10):
         elif row['query_id'] == 'q203684':
             text.append('翻译')
 
+        for j in range(len(text)):
+            if text[j] in english:
+                text[j] = text[j].lower()
+
         j = 1
         while j < len(text):
             if text[j] in stopword and text[j] not in connect:
                 text[j] = ' '
             if text[j] in english and text[j-1] not in english:
-                text[j] = text[j].lower()
                 text.insert(j, ' ')
                 j += 1
             elif text[j-1] in english and text[j] not in english:
-                text[j-1] = text[j-1].lower()
                 text.insert(j, ' ')
                 j += 1
             j += 1
@@ -336,7 +339,7 @@ if __name__ == "__main__":
     parser.add_argument('--weight','-w', type=int)
     args = parser.parse_args()
     if args.weight:
-        title_weight = max([1, args.weight])
+        title_weight = max([0, args.weight])
         print(title_weight)
     else:
         title_weight = 10
