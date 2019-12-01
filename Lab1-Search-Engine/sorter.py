@@ -12,7 +12,7 @@ class Searcher(Vectorizer):
 	def __init__(self, doc_file='Lab1-Search-Engine/Data/docs_token_jieba.json', 
 				query_file='Lab1-Search-Engine/Data/querys_token_jieba.json'):
 		super().__init__(doc_file=doc_file, query_file=query_file)
-		self.source_file = pd.read_csv('Lab1-Search-Engine/Data/submit7-jieba-0.812-0.883.csv')
+		self.source_file = pd.read_csv('Lab1-Search-Engine/Data/submit-fuse.csv')
 		
 
 	# simmode: 0 for inner product, 1 for cosine, 2 for pearson

@@ -5,9 +5,9 @@ def compare():
     docs = pd.read_csv('Lab1-Search-Engine/Data/test_docs.csv')
     querys = pd.read_csv('Lab1-Search-Engine/Data/test_querys.csv')
 
-    submit1 = pd.read_csv('Lab1-Search-Engine/Data/submit.csv')
-    submit2 = pd.read_csv('Lab1-Search-Engine/Data/submit10-jieba-0.825-0.889.csv')
-    # submit_fuse = submit1.copy()
+    submit1 = pd.read_csv('Lab1-Search-Engine/Data/submit-fuse.csv')
+    submit2 = pd.read_csv('Lab1-Search-Engine/Data/submit13-jieba-0.826-0.896.csv')
+    submit_fuse = submit1.copy()
 
     query_ids = submit1['query_id'].unique()
 
@@ -15,8 +15,8 @@ def compare():
         print(n, querys[querys['query_id']==query_id]['query'].values[0])
         docs1 = submit1[submit1['query_id']==query_id]['doc_id'].tolist()
         docs2 = submit2[submit2['query_id']==query_id]['doc_id'].tolist()
-        docs1_diff = []
-        docs2_diff = []
+        # docs1_diff = []
+        # docs2_diff = []
         # for i in range(20):
         #     print(docs1[i], docs2[i])
         for doc in docs1:
@@ -28,14 +28,16 @@ def compare():
                 # docs2_diff.append(doc)
                 print('submit2:', doc, docs[docs['doc_id']==doc]['doc_title'])
         choice = input()
-        # if choice == '2':
-        #     submit_fuse[submit_fuse['query_id']==query_id] = submit2[submit2['query_id']==query_id]
+        if choice == '2':
+            submit_fuse[submit_fuse['query_id']==query_id] = submit2[submit2['query_id']==query_id]
+    
+    submit_fuse.to_csv('Lab1-Search-Engine/Data/submit-fuse.csv', index=False)
 
 
 def view():
     docs = pd.read_csv('Lab1-Search-Engine/Data/test_docs.csv')
     querys = pd.read_csv('Lab1-Search-Engine/Data/test_querys.csv')
-    submit1 = pd.read_csv('Lab1-Search-Engine/Data/submit7-jieba-0.812-0.883.csv')
+    submit1 = pd.read_csv('Lab1-Search-Engine/Data/submit10-jieba-0.825-0.889.csv')
 
     query_ids = submit1['query_id'].unique()
 

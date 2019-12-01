@@ -53,7 +53,7 @@ class Vectorizer:
 		if tfmode == 0:
 			data = [(1 + np.math.log10(num))/(0.01 + np.math.log10(doc_word_num)) for num in doc['tokens'].values()]
 		elif tfmode == 1:
-			data = [1 + np.math.log10(num) for num in doc['tokens'].values()]
+			data = [1 + np.math.log(num) for num in doc['tokens'].values()]
 		elif tfmode == 2:
 			data = [num/doc_word_num for num in doc['tokens'].values()]
 		else:
@@ -81,7 +81,7 @@ class Vectorizer:
 			for word in doc['tokens'].keys():
 				df[word_ind[word]] += 1
 		df[df == 0] = 1
-		idf = np.array([np.math.log10(num_docs/i) for i in df])
+		idf = np.array([np.math.log(num_docs/i) for i in df])
 		df = df.reshape((-1, 1))
 		idf = idf.reshape((-1, 1))
 		if target_file is not None:

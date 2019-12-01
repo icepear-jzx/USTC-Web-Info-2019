@@ -9,9 +9,7 @@ import argparse
 
 
 def pkuseg_tokenizer(title_weight=10):
-    seg = pkuseg.pkuseg(postag=True)
-    stopword_tags = []
-    # stopword_tags = ['m', 'q', 'r', 'd', 'p', 'c', 'u', 'y', 'e', 'o', 'w']
+    seg = pkuseg.pkuseg()
     stopword = ['~', '`', '!', '@', '#', '$', '%', '^', '&', '*',
                 '(', ')', '_', '-', '+', '=', '[', ']', '{', '}', '\\', '|',
                 ';', ':', '\'', '"', ',', '<', '>', '.', '/', '?']
@@ -27,12 +25,8 @@ def pkuseg_tokenizer(title_weight=10):
     token_count = []
 
     for i, row in tqdm(list(data.iterrows())):
-        if str(row['content']) == 'nan' and str(row['doc_title']) == 'nan':
+        if str(row['content']) == 'nan' or str(row['doc_title']) == 'nan':
             continue
-        elif str(row['content']) == 'nan':
-            text = row['doc_title']
-        elif str(row['doc_title']) == 'nan':
-            text = row['content']
         else:
             text = row['doc_title'] * title_weight + row['content']
         
@@ -62,8 +56,7 @@ def pkuseg_tokenizer(title_weight=10):
 
         tokens = seg.cut(text)
 
-        tokens = [token for token, tag in tokens 
-            if tag not in stopword_tags and token not in stopword]
+        tokens = [token for token in tokens if token not in stopword]
 
         tokens = Counter(tokens)
         token_count.append({
@@ -92,6 +85,11 @@ def pkuseg_tokenizer(title_weight=10):
             text = ['枪神纪道聚城']
             text.append('《道聚城》')
             text.append('《枪神纪》')
+        
+        for j in range(len(text)):
+            if text[j] in english:
+                text[j] = text[j].lower()
+
         j = 1
         while j < len(text):
             if text[j] in stopword and text[j] not in connect:
@@ -340,7 +338,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
     if args.weight:
         title_weight = max([0, args.weight])
-        print(title_weight)
     else:
         title_weight = 10
     if args.model == 'pkuseg':
