@@ -2,7 +2,7 @@ import pandas as pd
 from collections import Counter
 
 
-# submit1 = pd.read_csv('Lab1-Search-Engine/Data/wzh.csv')
+# submit1 = pd.read_csv('Lab1-Search-Engine/Data/submit.csv')
 # submit2 = pd.read_csv('Lab1-Search-Engine/Data/submit13-jieba-0.826-0.896.csv')
 # submit_fuse = submit1.copy()
 
@@ -37,7 +37,7 @@ from collections import Counter
 # submit_fuse.to_csv('Lab1-Search-Engine/Data/submit-fuse.csv', index=False)
 
 
-submit1 = pd.read_csv('Lab1-Search-Engine/Data/wzh.csv')
+submit1 = pd.read_csv('Lab1-Search-Engine/Data/submit.csv')
 submit2 = pd.read_csv('Lab1-Search-Engine/Data/submit13-jieba-0.826-0.896.csv')
 submit_fuse = submit1.copy()
 
