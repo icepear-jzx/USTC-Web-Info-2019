@@ -2,7 +2,7 @@ import json
 import pandas as pd
 
 
-df = pd.read_csv('Lab2-Entity-Recognition/Data/submit.csv')
+df = pd.read_csv('Lab2-Entity-Recognition/Data/submit.csv').drop_duplicates()
 answer = json.loads(open('Lab2-Entity-Recognition/Data/answer.json').read())
 
 TP = 0
