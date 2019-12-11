@@ -94,35 +94,33 @@ def view_omitted(rules, answer):
         input()
 
 
-def gen_rules(trains, path):
+def gen_rules(trains, answers, path):
     rules = []
-    for item in trains:
+    for item in tqdm(trains):
         text = item['originalText']
         for entity in item['entities']:
             if entity[0] == '药物':
                 name = norule_transfer(text[entity[1]:entity[2]])
-                rule = '(?P<药物>{})\r\n'.format(name)
-                rules.append(rule)
-            # elif entity[0] == '手术':
-            #     name = norule_transfer(text[entity[1]:entity[2]])
-            #     rule = '(?P<手术>{})\r\n'.format(name)
-            #     rules.append(rule)
-            # elif entity[0] == '解剖部位':
-            #     name = norule_transfer(text[entity[1]:entity[2]])
-            #     rule = '(?P<解剖部位>{})\r\n'.format(name)
-            #     rules.append(rule)
-            # elif entity[0] == '疾病和诊断':
-            #     name = norule_transfer(text[entity[1]:entity[2]])
-            #     rule = '(?P<疾病和诊断>{})\r\n'.format(name)
-            #     rules.append(rule)
-            # elif entity[0] == '影像检查':
-            #     name = norule_transfer(text[entity[1]:entity[2]])
-            #     rule = '(?P<影像检查>{})\r\n'.format(name)
-            #     rules.append(rule)
-            # elif entity[0] == '实验室检验':
-            #     name = norule_transfer(text[entity[1]:entity[2]])
-            #     rule = '(?P<实验室检验>{})\r\n'.format(name)
-            #     rules.append(rule)
+                rule = '(?P<药物>{})'.format(name)
+            elif entity[0] == '手术':
+                name = norule_transfer(text[entity[1]:entity[2]])
+                rule = '(?P<手术>{})'.format(name)
+            elif entity[0] == '解剖部位':
+                name = norule_transfer(text[entity[1]:entity[2]])
+                rule = '(?P<解剖部位>{})'.format(name)
+            elif entity[0] == '疾病和诊断':
+                name = norule_transfer(text[entity[1]:entity[2]])
+                rule = '(?P<疾病和诊断>{})'.format(name)
+            elif entity[0] == '影像检查':
+                name = norule_transfer(text[entity[1]:entity[2]])
+                rule = '(?P<影像检查>{})'.format(name)
+            elif entity[0] == '实验室检验':
+                name = norule_transfer(text[entity[1]:entity[2]])
+                rule = '(?P<实验室检验>{})'.format(name)
+            TP, FP = test_rule(rule, answers)
+            precision = TP / (TP + FP + 0.000001)
+            if precision > 0.6:
+                rules.append(rule + '\r\n')
     rules = list(set(rules))
     with open(path, 'w') as fw:
         fw.writelines(rules)
@@ -150,7 +148,7 @@ if __name__ == "__main__":
 
     trains = get_trains(path + '/Data/train.txt')
 
-    # gen_rules(trains + answers, path + '/Data/auto-rules.txt')
+    # gen_rules(trains, trains, path + '/Data/auto-rules.txt')
     
     manual_rules = get_rules(path + '/Data/manual-rules.txt')
 
@@ -158,11 +156,11 @@ if __name__ == "__main__":
 
     rules = auto_rules + manual_rules
 
-    # gen_submit(rules, tests, path + '/Data/submit.csv')
+    gen_submit(rules, tests, path + '/Data/rule.csv')
 
-    for rule in manual_rules:
-        TP, FP = test_rule(rule, answers)
-        print('Rule:', rule, '\t\tTP:', TP, '\t\tFP:', FP)
+    # for rule in manual_rules:
+    #     TP, FP = test_rule(rule, answers)
+    #     print('Rule:', rule, '\t\tTP:', TP, '\t\tFP:', FP, '\t\tPrecision:', TP / (TP + FP))
     
-    view_omitted(rules, answers)
+    # view_omitted(rules, answers)
 
