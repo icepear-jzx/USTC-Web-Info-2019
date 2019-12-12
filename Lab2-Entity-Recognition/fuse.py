@@ -7,8 +7,11 @@ import pandas as pd
 path = os.path.dirname(os.path.abspath(__file__))
 
 rule = pd.read_csv(path + '/Data/rule.csv')
-submit = pd.read_csv(path + '/Data/submit1-0.6296.csv')
+submit = pd.read_csv(path + '/Data/submit2.csv')
+tests = json.loads(open(path + '/Data/test.json').read())
 fuse = {'textId':[], 'label_type':[], 'start_pos':[], 'end_pos':[]}
+punctuations = [' ', '+', '，', '-', '：', '、', '.', '；']
+
 
 for textId in range(600):
     rule_sub = rule[rule['textId'] == textId]
@@ -23,21 +26,31 @@ for textId in range(600):
         label_type = submit_labels[i]
         start_pos = submit_starts[i]
         end_pos = submit_ends[i]
-        # if label_type == '药物':
-        #     continue
         for j in range(len(rule_labels)):
             if start_pos < rule_ends[j] and end_pos > rule_starts[j]:
                 break
         else:
-            fuse['textId'].append(textId)
-            fuse['label_type'].append(label_type)
-            fuse['start_pos'].append(start_pos)
-            fuse['end_pos'].append(end_pos)
+            entity = tests[textId]['originalText'][start_pos:end_pos]
+            if entity[0] not in punctuations and \
+                    entity[-1] not in punctuations and \
+                    entity.count('(') == entity.count(')') and \
+                    entity.count('（') == entity.count('）') and \
+                    entity.count('”') == entity.count('“'):
+                fuse['textId'].append(textId)
+                fuse['label_type'].append(label_type)
+                fuse['start_pos'].append(start_pos)
+                fuse['end_pos'].append(end_pos)
     for i in range(len(rule_labels)):
-        fuse['textId'].append(textId)
-        fuse['label_type'].append(rule_labels[i])
-        fuse['start_pos'].append(rule_starts[i])
-        fuse['end_pos'].append(rule_ends[i])
+        entity = tests[textId]['originalText'][rule_starts[i]:rule_ends[i]]
+        if entity[0] not in punctuations and \
+                entity[-1] not in punctuations and \
+                entity.count('(') == entity.count(')') and \
+                entity.count('（') == entity.count('）') and \
+                entity.count('”') == entity.count('“'):
+            fuse['textId'].append(textId)
+            fuse['label_type'].append(rule_labels[i])
+            fuse['start_pos'].append(rule_starts[i])
+            fuse['end_pos'].append(rule_ends[i])
 
 fuse = pd.DataFrame(fuse).drop_duplicates()
 fuse.to_csv(path + '/Data/fuse.csv', index=False)
