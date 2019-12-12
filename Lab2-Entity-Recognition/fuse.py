@@ -10,7 +10,7 @@ rule = pd.read_csv(path + '/Data/rule.csv')
 submit = pd.read_csv(path + '/Data/submit2.csv')
 tests = json.loads(open(path + '/Data/test.json').read())
 fuse = {'textId':[], 'label_type':[], 'start_pos':[], 'end_pos':[]}
-punctuations = [' ', '+', '，', '-', '：', '、', '.', '；']
+punctuations = [' ', '+', '，', '-', '：', '、', '.', '；', '。', '？', '/', '*', '\\']
 
 
 for textId in range(600):
@@ -35,7 +35,8 @@ for textId in range(600):
                     entity[-1] not in punctuations and \
                     entity.count('(') == entity.count(')') and \
                     entity.count('（') == entity.count('）') and \
-                    entity.count('”') == entity.count('“'):
+                    entity.count('”') == entity.count('“') and \
+                    entity.count('"') % 2 == 0:
                 fuse['textId'].append(textId)
                 fuse['label_type'].append(label_type)
                 fuse['start_pos'].append(start_pos)
@@ -46,7 +47,8 @@ for textId in range(600):
                 entity[-1] not in punctuations and \
                 entity.count('(') == entity.count(')') and \
                 entity.count('（') == entity.count('）') and \
-                entity.count('”') == entity.count('“'):
+                entity.count('”') == entity.count('“') and \
+                entity.count('"') % 2 == 0:
             fuse['textId'].append(textId)
             fuse['label_type'].append(rule_labels[i])
             fuse['start_pos'].append(rule_starts[i])

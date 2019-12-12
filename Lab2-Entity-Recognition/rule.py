@@ -119,7 +119,7 @@ def gen_rules(trains, answers, path):
                 rule = '(?P<实验室检验>{})'.format(name)
             TP, FP = test_rule(rule, answers)
             precision = TP / (TP + FP + 0.000001)
-            if precision > 0.6:
+            if precision > 0.7:
                 rules.append(rule + '\r\n')
     rules = list(set(rules))
     with open(path, 'w') as fw:
@@ -148,7 +148,7 @@ if __name__ == "__main__":
 
     trains = get_trains(path + '/Data/train.txt')
 
-    # gen_rules(trains, trains, path + '/Data/auto-rules.txt')
+    gen_rules(trains, trains, path + '/Data/auto-rules.txt')
     
     manual_rules = get_rules(path + '/Data/manual-rules.txt')
 
