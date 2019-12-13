@@ -3,12 +3,15 @@ from scipy.sparse import coo_matrix
 from scipy.sparse import hstack
 import numpy as np
 import pickle
+import os
 
+
+path = os.path.dirname(os.path.abspath(__file__))
 
 
 class Vectorizer:
-	def __init__(self, doc_file='Lab1-Search-Engine/Data/docs_token_jieba.json', 
-				query_file='Lab1-Search-Engine/Data/querys_token_jieba.json'):
+	def __init__(self, doc_file=path+'/Data/docs_token_jieba.json', 
+				query_file=path+'/Data/querys_token_jieba.json'):
 		self.doc_file = doc_file
 		self.query_file = query_file
 		self.docs = json.load(open(self.doc_file))
@@ -21,7 +24,7 @@ class Vectorizer:
 		self.tfidf = self.calculate_tfidf()
 
 
-	def create_word_indices(self, target_file='Lab1-Search-Engine/Data/word_indices.json', load=False):
+	def create_word_indices(self, target_file=path+'/Data/word_indices.json', load=False):
 		if load == True:
 			try: return json.load(open(target_file))
 			except: pass
@@ -69,7 +72,7 @@ class Vectorizer:
 		return coo_matrix((data, (positions, [0]*len(data))), shape=(vec_len, 1))
 
 
-	def calculate_idf(self, target_file='Lab1-Search-Engine/Data/idf.txt', load=False):
+	def calculate_idf(self, target_file=path+'/Data/idf.txt', load=False):
 		if load == True:
 			try: return None, np.loadtxt(target_file).reshape((-1, 1))
 			except: pass
@@ -89,7 +92,7 @@ class Vectorizer:
 		return df, idf
 
 
-	def calculate_tf(self, target_file='Lab1-Search-Engine/Data/tf.txt', load=False):
+	def calculate_tf(self, target_file=path+'/Data/tf.txt', load=False):
 		if load == True:
 			try: return pickle.load(open(target_file, 'rb'))
 			except: pass
@@ -103,7 +106,7 @@ class Vectorizer:
 		return tf
 
 	
-	def calculate_tfidf(self, target_file='Lab1-Search-Engine/Data/tfidf.txt', load=False):
+	def calculate_tfidf(self, target_file=path+'/Data/tfidf.txt', load=False):
 		if load == True:
 			try: return pickle.load(open(target_file, 'rb'))
 			except: pass

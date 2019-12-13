@@ -1,5 +1,9 @@
 import pandas as pd
 from collections import Counter
+import os
+
+
+path = os.path.dirname(os.path.abspath(__file__))
 
 
 # submit1 = pd.read_csv('Lab1-Search-Engine/Data/submit.csv')
@@ -37,8 +41,8 @@ from collections import Counter
 # submit_fuse.to_csv('Lab1-Search-Engine/Data/submit-fuse.csv', index=False)
 
 
-submit1 = pd.read_csv('Lab1-Search-Engine/Data/submit.csv')
-submit2 = pd.read_csv('Lab1-Search-Engine/Data/submit13-jieba-0.826-0.896.csv')
+submit1 = pd.read_csv(path + '/Data/submit.csv')
+submit2 = pd.read_csv(path + '/Data/submit13-jieba-0.826-0.896.csv')
 submit_fuse = submit1.copy()
 
 query_ids = submit1['query_id'].unique()
@@ -65,4 +69,4 @@ for n, query_id in enumerate(query_ids):
             i += 1
     submit_fuse.loc[submit_fuse['query_id']==query_id, 'doc_id'] = docs
 
-submit_fuse.to_csv('Lab1-Search-Engine/Data/submit-fuse.csv', index=False)
+submit_fuse.to_csv(path + '/Data/submit-fuse.csv', index=False)

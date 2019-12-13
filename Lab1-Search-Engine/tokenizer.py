@@ -6,6 +6,10 @@ from tqdm import tqdm
 import jieba 
 import jieba.analyse
 import argparse
+import os
+
+
+path = os.path.dirname(os.path.abspath(__file__))
 
 
 def pkuseg_tokenizer(title_weight=10):
@@ -21,7 +25,7 @@ def pkuseg_tokenizer(title_weight=10):
     connect = [':', '.', '-']
     numbers = list('1234567890')
 
-    data = pd.read_csv('Lab1-Search-Engine/Data/test_docs.csv')
+    data = pd.read_csv(path+'/Data/test_docs.csv')
     token_count = []
 
     for i, row in tqdm(list(data.iterrows())):
@@ -66,10 +70,10 @@ def pkuseg_tokenizer(title_weight=10):
             'tokens': tokens
         })
 
-    with open('Lab1-Search-Engine/Data/docs_token_pkuseg.json', 'w') as f:
+    with open(path+'/Data/docs_token_pkuseg.json', 'w') as f:
         json.dump(token_count, f, indent=4, ensure_ascii=False)
 
-    data = pd.read_csv('Lab1-Search-Engine/Data/test_querys.csv')
+    data = pd.read_csv(path+'/Data/test_querys.csv')
     token_count = {}
 
     for i, row in tqdm(list(data.iterrows())):
@@ -117,7 +121,7 @@ def pkuseg_tokenizer(title_weight=10):
             'tokens': tokens
         }
 
-    with open('Lab1-Search-Engine/Data/querys_token_pkuseg.json', 'w') as f:
+    with open(path+'/Data/querys_token_pkuseg.json', 'w') as f:
         json.dump(token_count, f, indent=4, ensure_ascii=False)
 
 
@@ -195,7 +199,7 @@ def jieba_tokenizer(title_weight=10):
     connect = [':', '.', '-']
     numbers = list('1234567890')
 
-    data = pd.read_csv('Lab1-Search-Engine/Data/test_docs.csv')
+    data = pd.read_csv(path+'/Data/test_docs.csv')
     token_count = []
 
     for i, row in tqdm(list(data.iterrows())):
@@ -240,18 +244,14 @@ def jieba_tokenizer(title_weight=10):
             'tokens': tokens
         })
 
-    with open('Lab1-Search-Engine/Data/docs_token_jieba.json', 'w') as f:
+    with open(path+'/Data/docs_token_jieba.json', 'w') as f:
         json.dump(token_count, f, indent=4, ensure_ascii=False)
 
-    spider = json.loads(open('Lab1-Search-Engine/Data/querys_spider.json').read())
-    data = pd.read_csv('Lab1-Search-Engine/Data/test_querys.csv')
+    spider = json.loads(open(path+'/Data/querys_spider.json').read())
+    data = pd.read_csv(path+'/Data/test_querys.csv')
     token_count = {}
 
     for i, row in tqdm(list(data.iterrows())):
-        # if row['query_id'] in spider:
-        #     text = spider[row['query_id']]
-        #     text = list(text)
-        # else:
         text = row['query']
         text = list(text)
         if row['query_id'] == 'q23086':   # 清明节黑板报资料
@@ -327,7 +327,7 @@ def jieba_tokenizer(title_weight=10):
             'tokens': tokens
         }
 
-    with open('Lab1-Search-Engine/Data/querys_token_jieba.json', 'w') as f:
+    with open(path+'/Data/querys_token_jieba.json', 'w') as f:
         json.dump(token_count, f, indent=4, ensure_ascii=False)
 
 

@@ -6,13 +6,17 @@ import numpy as np
 from vectorizer import Vectorizer
 import pandas as pd
 from tqdm import tqdm
+import os
+
+
+path = os.path.dirname(os.path.abspath(__file__))
 
 
 class Searcher(Vectorizer):
-	def __init__(self, doc_file='Lab1-Search-Engine/Data/docs_token_jieba.json', 
-				query_file='Lab1-Search-Engine/Data/querys_token_jieba.json'):
+	def __init__(self, doc_file=path+'/Data/docs_token_jieba.json', 
+				query_file=path+'/Data/querys_token_jieba.json'):
 		super().__init__(doc_file=doc_file, query_file=query_file)
-		self.source_file = pd.read_csv('Lab1-Search-Engine/Data/submit-fuse.csv')
+		self.source_file = pd.read_csv(path+'/Data/submit-fuse.csv')
 		
 
 	# simmode: 0 for inner product, 1 for cosine, 2 for pearson
@@ -39,8 +43,8 @@ class Searcher(Vectorizer):
 		return [self.docs[i]['doc_id'] for i in idx_sorted], [self.docs[i]['doc_title'] for i in idx_sorted]
 
 	
-	def create_submission(self, org_file='Lab1-Search-Engine/Data/submission.csv', 
-			target_file='Lab1-Search-Engine/Data/submit.csv'):
+	def create_submission(self, org_file=path+'/Data/submission.csv', 
+			target_file=path+'/Data/submit.csv'):
 		question = pd.read_csv(org_file)
 		qids = question['query_id']
 		dids = []

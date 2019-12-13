@@ -1,12 +1,16 @@
 import pandas as pd
+import os
+
+
+path = os.path.dirname(os.path.abspath(__file__))
 
 
 def compare():
-    docs = pd.read_csv('Lab1-Search-Engine/Data/test_docs.csv')
-    querys = pd.read_csv('Lab1-Search-Engine/Data/test_querys.csv')
+    docs = pd.read_csv(path+'/Data/test_docs.csv')
+    querys = pd.read_csv(path+'/Data/test_querys.csv')
 
-    submit1 = pd.read_csv('Lab1-Search-Engine/Data/submit-fuse.csv')
-    submit2 = pd.read_csv('Lab1-Search-Engine/Data/submit13-jieba-0.826-0.896.csv')
+    submit1 = pd.read_csv(path+'/Data/submit-fuse.csv')
+    submit2 = pd.read_csv(path+'/Data/submit13-jieba-0.826-0.896.csv')
     submit_fuse = submit1.copy()
 
     query_ids = submit1['query_id'].unique()
@@ -31,13 +35,13 @@ def compare():
         if choice == '2':
             submit_fuse[submit_fuse['query_id']==query_id] = submit2[submit2['query_id']==query_id]
     
-    submit_fuse.to_csv('Lab1-Search-Engine/Data/submit-fuse.csv', index=False)
+    submit_fuse.to_csv(path+'/Data/submit-fuse.csv', index=False)
 
 
 def view():
-    docs = pd.read_csv('Lab1-Search-Engine/Data/test_docs.csv')
-    querys = pd.read_csv('Lab1-Search-Engine/Data/test_querys.csv')
-    submit1 = pd.read_csv('Lab1-Search-Engine/Data/submit10-jieba-0.825-0.889.csv')
+    docs = pd.read_csv(path+'/Data/test_docs.csv')
+    querys = pd.read_csv(path+'/Data/test_querys.csv')
+    submit1 = pd.read_csv(path+'/Data/submit10-jieba-0.825-0.889.csv')
 
     query_ids = submit1['query_id'].unique()
 
@@ -46,9 +50,9 @@ def view():
         docs1 = submit1[submit1['query_id']==query_id]['doc_id'].tolist()
         for doc in docs1:
             print(doc, docs[docs['doc_id']==doc]['doc_title'].values)
-            # print(docs[docs['doc_id']==doc]['content'].values[0])
         input()
 
 
-compare()
-
+if __name__ == "__main__":
+    # view()
+    compare()
