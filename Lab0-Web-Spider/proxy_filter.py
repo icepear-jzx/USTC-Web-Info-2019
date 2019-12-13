@@ -5,7 +5,10 @@ from lxml import etree
 import json
 import socket
 import multiprocessing as mp
+import os
 
+
+path = os.path.dirname(os.path.abspath(__file__))
 
 headers = [
     {'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.6) Gecko/20091201 Firefox/3.5.6'},
@@ -31,7 +34,7 @@ def test_proxy(proxy):
 
 proxy_list = mp.Manager().list()
 url = 'https://book.douban.com/'
-with open('proxies.txt', 'r') as f:
+with open(path + '/Data/proxies.txt', 'r') as f:
     proxy_txt = f.read().split('\n')
 proxies = [{"https": proxy} for proxy in proxy_txt]
 # with open('proxies.json', 'r') as f:
@@ -43,5 +46,5 @@ pool.close()
 pool.join()
 
 proxy_list = [proxy for proxy in proxy_list]
-with open('proxies.json', 'w') as f:
+with open(path + '/Data/proxies.json', 'w') as f:
     json.dump(proxy_list, f, indent=4)

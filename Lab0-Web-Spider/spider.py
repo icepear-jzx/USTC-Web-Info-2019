@@ -5,7 +5,9 @@ from lxml import etree
 import json
 import socket
 import multiprocessing as mp
+import os
 
+path = os.path.dirname(os.path.abspath(__file__))
 
 headers = [
     {'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.6) Gecko/20091201 Firefox/3.5.6'},
@@ -98,7 +100,7 @@ def get_top250_url():
 
         print('Finish:', url)
     
-    with open('top250-url.json', 'w') as f:
+    with open(path + '/Data/top250-url.json', 'w') as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
 
 
@@ -226,7 +228,7 @@ def get_top250_detail(max_shortRemark_page=1, max_longRemark_page=1):
     20 processes in parallel.
     Save in top250-detail.json.
     """
-    with open('top250-url.json', 'r') as f:
+    with open(path + '/Data/top250-url.json', 'r') as f:
         books = json.loads(f.read())
     books = manager.list([manager.dict(book) for book in books])
     args = [(books, i, max_shortRemark_page, max_longRemark_page) for i in range(len(books))]
@@ -236,7 +238,7 @@ def get_top250_detail(max_shortRemark_page=1, max_longRemark_page=1):
     pool.join()
 
     books = [{key: value for key, value in book.items()} for book in books]
-    with open('top250-detail.json', 'w') as f:
+    with open(path + '/Data/top250-detail.json', 'w') as f:
         json.dump(books, f, indent=4, ensure_ascii=False)
 
 
@@ -320,13 +322,13 @@ def get_all_url(max_book_num=10000):
         get_similar_url(args)
     
     books_list = [book for book in books_list]
-    with open('all-url.json', 'w') as f:
+    with open(path + '/Data/all-url.json', 'w') as f:
         json.dump(books_list, f, indent=4, ensure_ascii=False)
             
 
 if __name__ == "__main__":
     manager = mp.Manager()
-    with open('proxies.json', 'r') as f:
+    with open(path + '/Data/proxies.json', 'r') as f:
         proxy_list = json.loads(f.read())
     proxy_list = manager.list(proxy_list)
     # get_top250_url()
