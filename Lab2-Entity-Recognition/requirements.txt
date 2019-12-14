@@ -2,3 +2,4 @@ pandas
 tqdm
 numpy
 tensorflow
+sklearn-crfsuite

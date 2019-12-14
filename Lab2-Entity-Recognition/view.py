@@ -3,7 +3,7 @@ import json
 
 
 lines = open('Lab2-Entity-Recognition/Data/test.txt').readlines()
-df = pd.read_csv('Lab2-Entity-Recognition/Data/fuse.csv')
+df = pd.read_csv('Lab2-Entity-Recognition/Data/submit.csv')
 
 
 for i in range(600):

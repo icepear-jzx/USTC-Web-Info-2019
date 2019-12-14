@@ -72,8 +72,6 @@ def test_rule(rule, answers):
             if item in answer['entities']:
                 TP += 1
             else:
-                # text = answer['originalText']
-                # print(text[max((item[1]-5,0)):min((item[2]+5,len(text)))])
                 FP += 1
     return TP, FP
 
@@ -119,7 +117,7 @@ def gen_rules(trains, answers, path):
                 rule = '(?P<实验室检验>{})'.format(name)
             TP, FP = test_rule(rule, answers)
             precision = TP / (TP + FP + 0.000001)
-            if precision > 0.7:
+            if precision > 0.9:
                 rules.append(rule + '\r\n')
     rules = list(set(rules))
     with open(path, 'w') as fw:
