@@ -31,3 +31,16 @@ each item has query and query_id.
 * Submission format is shown in [submission.csv](./Lab1-Search-Engine/Data/submission.csv).
 
 More details: [http://staff.ustc.edu.cn/~tongxu/webinfo/slides/exp1.pdf](http://staff.ustc.edu.cn/~tongxu/webinfo/slides/exp1.pdf)
+
+## Lab2 Entity Recognition
+
+A task of clinical named entity recognition (CNER) in CCKS 2019.
+
+* Train set is given in [train.txt](./Lab2-Entity-Recognition/Data/train.txt),
+each line is in JSON format with `originalText` and `entities`.
+* Test set is given in [test.txt](./Lab2-Entity-Recognition/Data/test.txt),
+each line is in JSON format with `originalText` and `textId`.
+* Recognize entities in test set and record them in CSV format, 
+each row includes `textId`, `label_type`, `start_pos`, `end_pos`.
+
+More details: [http://staff.ustc.edu.cn/~tongxu/webinfo/slides/exp2.pdf](http://staff.ustc.edu.cn/~tongxu/webinfo/slides/exp2.pdf)
