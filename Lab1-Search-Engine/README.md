@@ -25,7 +25,7 @@ You have to be in the root directory of this repository.
 
 ### 1. Segmentation
 
-You can use [pkuseg](https://github.com/lancopku/pkuseg-python) or [jieba](https://github.com/fxsjy/jieba) for segmentation. And set the weight of documents' title by `-w`. The default value is 10.
+You can use [pkuseg](https://github.com/lancopku/pkuseg-python) or [jieba](https://github.com/fxsjy/jieba) for segmentation. And set the weight of document title by `-w`. The default value is 10.
 
 ```shell
 $ python3 Lab1-Search-Engine/tokenizer.py -m jieba -w 100
