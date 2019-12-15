@@ -1,7 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import os, argparse, time, random
-from model import BiLSTM_CRF
+from bilstm_crf import BiLSTM_CRF
 import os
 
 from utils import str2bool, read_corpus, read_dictionary, tag2label, random_embedding, bert_embedding
