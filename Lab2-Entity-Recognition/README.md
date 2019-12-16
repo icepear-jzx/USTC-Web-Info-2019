@@ -10,3 +10,13 @@ each line is in JSON format with `originalText` and `textId`.
 each row includes `textId`, `label_type`, `start_pos`, `end_pos`.
 
 More details: [http://staff.ustc.edu.cn/~tongxu/webinfo/slides/exp2.pdf](http://staff.ustc.edu.cn/~tongxu/webinfo/slides/exp2.pdf)
+
+## Installation
+
+```shell
+$ pip3 install -r requirements.txt
+```
+
+## Usage
+
+## Explanation
