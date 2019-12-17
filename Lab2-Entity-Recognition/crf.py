@@ -12,20 +12,23 @@ path = os.path.dirname(os.path.abspath(__file__))
 def word2features(sent, i):
     punctuations = [' ', '+', '，', '-', '：', '、', '.', '；', '。', '？',
         '/', '*', '\\', '(', ')', '（', '）', '”', '“', '"']
+    english = 'qwertyuiopasdfghjklzxcvbnm'
     word = sent[i][0]
     features = {
         'bias': 1.0,
         'word.lower()': word.lower(),
-        # 'word.isdigit()': word.isdigit(),
-        # 'word.ispunc()': word in punctuations
+        'word.isdigit()': word.isdigit(),
+        'word.ispunc()': word in punctuations,
+        'word.isenglish()': word.lower() in english
     }
 
     if i > 0:
         word1 = sent[i-1][0]
         features.update({
             '-1:word.lower()': word1.lower(),
-            # '-1:word.isdigit()': word1.isdigit(),
-            # '-1:word.ispunc()': word1 in punctuations,
+            '-1:word.isdigit()': word1.isdigit(),
+            '-1:word.ispunc()': word1 in punctuations,
+            '-1:word.isenglish()': word1.lower() in english,
             '-1+0:words.lower()': word1.lower() + word.lower()
         })
     else:
@@ -35,8 +38,9 @@ def word2features(sent, i):
         word1 = sent[i+1][0]
         features.update({
             '+1:word.lower()': word1.lower(),
-            # '+1:word.isdigit()': word1.isdigit(),
-            # '+1:word.ispunc()': word1 in punctuations,
+            '+1:word.isdigit()': word1.isdigit(),
+            '+1:word.ispunc()': word1 in punctuations,
+            '+1:word.isenglish()': word1.lower() in english,
             '0+1:words.lower()': word.lower() + word1.lower()
         })
     else:
@@ -120,7 +124,7 @@ if __name__ == "__main__":
         algorithm='lbfgs',
         c1=0.2,
         c2=0.1,
-        max_iterations=100,
+        max_iterations=600,
         all_possible_transitions=True,
         all_possible_states=True,
         verbose=True

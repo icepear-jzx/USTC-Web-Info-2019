@@ -7,7 +7,7 @@ import pandas as pd
 path = os.path.dirname(os.path.abspath(__file__))
 
 rule = pd.read_csv(path + '/Data/rule.csv')
-submit = pd.read_csv(path + '/Data/submit4.csv')
+submit = pd.read_csv(path + '/Data/submit5.csv')
 tests = json.loads(open(path + '/Data/test.json').read())
 fuse = {'textId':[], 'label_type':[], 'start_pos':[], 'end_pos':[]}
 punctuations = [' ', '+', '，', '-', '：', '、', '.', '；', '。', '？', '/', '*', '\\']
