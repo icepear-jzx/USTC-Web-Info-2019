@@ -14,21 +14,25 @@ def word2features(sent, i):
         '/', '*', '\\', '(', ')', '（', '）', '”', '“', '"']
     english = 'qwertyuiopasdfghjklzxcvbnm'
     word = sent[i][0]
+    radical = sent[i][1]
     features = {
         'bias': 1.0,
         'word.lower()': word.lower(),
         'word.isdigit()': word.isdigit(),
         'word.ispunc()': word in punctuations,
-        'word.isenglish()': word.lower() in english
+        'word.isenglish()': word.lower() in english,
+        # 'word.radical()': radical
     }
 
     if i > 0:
         word1 = sent[i-1][0]
+        radical1 = sent[i-1][1]
         features.update({
             '-1:word.lower()': word1.lower(),
             '-1:word.isdigit()': word1.isdigit(),
             '-1:word.ispunc()': word1 in punctuations,
             '-1:word.isenglish()': word1.lower() in english,
+            # '-1:word.radical()': radical1,
             '-1+0:words.lower()': word1.lower() + word.lower()
         })
     else:
@@ -36,15 +40,41 @@ def word2features(sent, i):
 
     if i < len(sent)-1:
         word1 = sent[i+1][0]
+        radical1 = sent[i+1][1]
         features.update({
             '+1:word.lower()': word1.lower(),
             '+1:word.isdigit()': word1.isdigit(),
             '+1:word.ispunc()': word1 in punctuations,
             '+1:word.isenglish()': word1.lower() in english,
+            # '+1:word.radical()': radical1,
             '0+1:words.lower()': word.lower() + word1.lower()
         })
     else:
         features['EOS'] = True
+    
+    # if i > 1:
+    #     word1 = sent[i-1][0]
+    #     word2 = sent[i-2][0]
+    #     features.update({
+    #         '-2:word.lower()': word2.lower(),
+    #         '-2:word.isdigit()': word2.isdigit(),
+    #         '-2:word.ispunc()': word2 in punctuations,
+    #         '-2:word.isenglish()': word2.lower() in english,
+    #         '-2-1:words.lower()': word2.lower() + word1.lower(),
+    #         '-2-1+0:words.lower()': word2.lower() + word1.lower() + word.lower()
+    #     })
+    
+    # if i < len(sent)-2:
+    #     word1 = sent[i+1][0]
+    #     word2 = sent[i+2][0]
+    #     features.update({
+    #         '+2:word.lower()': word2.lower(),
+    #         '+2:word.isdigit()': word2.isdigit(),
+    #         '+2:word.ispunc()': word2 in punctuations,
+    #         '+2:word.isenglish()': word2.lower() in english,
+    #         '+1+2:words.lower()': word1.lower() + word2.lower(),
+    #         '0+1+2:words.lower()': word.lower() + word1.lower() + word2.lower()
+    #     })
 
     return features
 
@@ -54,11 +84,11 @@ def sent2features(sent):
 
 
 def sent2labels(sent):
-    return [label for token, label in sent]
+    return [label for token, radical, label in sent]
 
 
 def sent2tokens(sent):
-    return [token for token, label in sent]
+    return [(token, radical) for token, radical, label in sent]
 
 
 def labels2csv(pred):
@@ -98,8 +128,8 @@ if __name__ == "__main__":
     sent = []
     for line in open(path + '/Data/train_word.txt'):
         s = line[:-1].split('\t')
-        if len(s) == 2:
-            sent.append((s[0], s[1]))
+        if len(s) == 3:
+            sent.append((s[0], s[1], s[2]))
         else:
             train_sents.append(sent)
             sent = []
@@ -108,8 +138,8 @@ if __name__ == "__main__":
     sent = []
     for line in open(path + '/Data/test_word.txt'):
         s = line[:-1].split('\t')
-        if len(s) == 2:
-            sent.append((s[0], s[1]))
+        if len(s) == 3:
+            sent.append((s[0], s[1], s[2]))
         else:
             test_sents.append(sent)
             sent = []
@@ -122,8 +152,8 @@ if __name__ == "__main__":
 
     crf = sklearn_crfsuite.CRF(
         algorithm='lbfgs',
-        c1=0.2,
-        c2=0.1,
+        c1=0,
+        c2=0.2,
         max_iterations=600,
         all_possible_transitions=True,
         all_possible_states=True,
