@@ -13,10 +13,8 @@ More details: [http://staff.ustc.edu.cn/~tongxu/webinfo/slides/exp1.pdf](http://
 
 ## Installation
 
-You have to be in the root directory of this repository. And then run:
-
 ```shell
-$ pip3 install -r Lab1-Search-Engine/requirements.txt
+$ pip3 install -r requirements.txt --user
 ```
 
 ## Usage
@@ -28,15 +26,36 @@ You have to be in the root directory of this repository.
 You can use [pkuseg](https://github.com/lancopku/pkuseg-python) or [jieba](https://github.com/fxsjy/jieba) for segmentation. And set the weight of document title by `-w`. The default value is 10.
 
 ```shell
-$ python3 Lab1-Search-Engine/tokenizer.py -m jieba -w 100
+$ python3 tokenizer.py -m jieba -w 100
 ```
+
+The output files are `docs_token_jieba.json` and `querys_token_jieba.json` in `Data/`.
 
 ### 2. Search
 
-### 3. Sort
+Calculate tf-idf and select top 20 documents for each query.
+
+```shell
+$ python3 searcher.py
+```
+
+You will get `submit.csv` as a preliminary result and other intermediate files.
+
+### 3. Reorder
+
+Setting the weight of title can improve recall score but F1 score might decline. To improve F1 score, you'd better reorder the top 20 documents for each query.
+
+```shell
+$ python3 tokenizer.py -m jieba -w 1
+$ python3 sorter.py 
+```
 
 ### 4. Results
 
+The final result is `submit-sorted.csv`.
+
+You can see my results and scores in `Data/`.
+
 ## Explanation
 
-
+My report: [report-lab1.pdf](./report-lab1.pdf).

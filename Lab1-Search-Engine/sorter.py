@@ -16,7 +16,7 @@ class Searcher(Vectorizer):
 	def __init__(self, doc_file=path+'/Data/docs_token_jieba.json', 
 				query_file=path+'/Data/querys_token_jieba.json'):
 		super().__init__(doc_file=doc_file, query_file=query_file)
-		self.source_file = pd.read_csv(path+'/Data/submit-fuse.csv')
+		self.source_file = pd.read_csv(path+'/Data/submit.csv')
 		
 
 	# simmode: 0 for inner product, 1 for cosine, 2 for pearson
@@ -44,7 +44,7 @@ class Searcher(Vectorizer):
 
 	
 	def create_submission(self, org_file=path+'/Data/submission.csv', 
-			target_file=path+'/Data/submit.csv'):
+			target_file=path+'/Data/submit-sorted.csv'):
 		question = pd.read_csv(org_file)
 		qids = question['query_id']
 		dids = []
