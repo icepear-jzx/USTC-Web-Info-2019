@@ -2,6 +2,7 @@ import json
 import os
 from utils import read_corpus
 import pickle
+import xmnlp
 
 
 path = os.path.dirname(os.path.abspath(__file__))
@@ -34,20 +35,21 @@ def process_train(data, fname):
     for record in data:
         text = record['originalText']
         entities = record['entities']
+        radicals = xmnlp.radical(text)
         i = 0
         j = 0
         while i < len(text):
             if j < len(entities):
                 if entities[j]['start_pos'] <= i and i < entities[j]['end_pos']:
-                    fr.write('%s\t%s-%s\n'%(text[i], 'B' if i == entities[j]['start_pos'] else 'I', table[entities[j]['label_type']]))
+                    fr.write('%s\t%s\t%s-%s\n'%(text[i], radicals[i], 'B' if i == entities[j]['start_pos'] else 'I', table[entities[j]['label_type']]))
                     i += 1
                 else:
-                    fr.write('%s\t0\n'%text[i])
+                    fr.write('%s\t%s\t0\n'%(text[i], radicals[i]))
                     if i == entities[j]['end_pos']:
                         j += 1
                     i += 1
             else:
-                fr.write('%s\t0\n'%text[i])
+                fr.write('%s\t%s\t0\n'%(text[i], radicals[i]))
                 i += 1
         fr.write('\n')
 
@@ -56,8 +58,9 @@ def process_test(data, fname):
     fr = open(fname, 'w')
     for record in data:
         text = record['originalText']
-        for c in text:
-            fr.write('%s\t0\n'%(c))
+        radicals = xmnlp.radical(text)
+        for i in range(len(text)):
+            fr.write('%s\t%s\t0\n'%(text[i], radicals[i]))
         fr.write('\n')
     fr.close()
 

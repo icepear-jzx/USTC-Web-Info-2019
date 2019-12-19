@@ -3,3 +3,4 @@ tqdm
 numpy
 tensorflow
 sklearn-crfsuite
+xmnlp
