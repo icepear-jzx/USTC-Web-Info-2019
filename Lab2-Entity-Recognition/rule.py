@@ -100,18 +100,18 @@ def gen_rules(trains, answers, path):
             if entity[0] == '药物':
                 name = norule_transfer(text[entity[1]:entity[2]])
                 rule = '(?P<药物>{})'.format(name)
-            elif entity[0] == '手术':
-                name = norule_transfer(text[entity[1]:entity[2]])
-                rule = '(?P<手术>{})'.format(name)
+            # elif entity[0] == '手术':
+            #     name = norule_transfer(text[entity[1]:entity[2]])
+            #     rule = '(?P<手术>{})'.format(name)
             elif entity[0] == '解剖部位':
                 name = norule_transfer(text[entity[1]:entity[2]])
                 rule = '(?P<解剖部位>{})'.format(name)
             elif entity[0] == '疾病和诊断':
                 name = norule_transfer(text[entity[1]:entity[2]])
                 rule = '(?P<疾病和诊断>{})'.format(name)
-            elif entity[0] == '影像检查':
-                name = norule_transfer(text[entity[1]:entity[2]])
-                rule = '(?P<影像检查>{})'.format(name)
+            # elif entity[0] == '影像检查':
+            #     name = norule_transfer(text[entity[1]:entity[2]])
+            #     rule = '(?P<影像检查>{})'.format(name)
             elif entity[0] == '实验室检验':
                 name = norule_transfer(text[entity[1]:entity[2]])
                 rule = '(?P<实验室检验>{})'.format(name)

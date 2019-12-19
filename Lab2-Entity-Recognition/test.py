@@ -34,9 +34,12 @@ def test():
 
     print('\t\tPrecision\tRecall\t\tF1')
     for label in TP.keys():
-        precision = TP[label]/(TP[label]+FP[label])
-        recall = TP[label]/(TP[label]+FN[label])
-        f1 = 2 * precision * recall / (precision + recall)
+        if TP[label] != 0:
+            precision = TP[label]/(TP[label]+FP[label])
+            recall = TP[label]/(TP[label]+FN[label])
+            f1 = 2 * precision * recall / (precision + recall)
+        else:
+            precision = recall = f1 = 0
         print('{:10}\t{:.5f}\t\t{:.5f}\t\t{:.5f}'.format(label, precision, recall, f1))
 
     TP = sum(TP.values())
