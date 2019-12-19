@@ -41,9 +41,9 @@ $ python3 searcher.py
 
 You will get `submit.csv` as a preliminary result and other intermediate files.
 
-### 3. Reorder
+### 3. Re-sort
 
-Setting the weight of title can improve recall score but F1 score might decline. To improve F1 score, you'd better reorder the top 20 documents for each query.
+Setting the weight of title can improve recall score but F1 score might decline. To improve F1 score, you'd better re-sort the top 20 documents for each query.
 
 ```shell
 $ python3 tokenizer.py -m jieba -w 1
