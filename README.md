@@ -1,11 +1,14 @@
 # USTC-Web-Info
 
+> Labs of 2019 Web Information Processing and Application in USTC.
+
 ## Download
 
 ```shell
-$ sudo apt-get install git-lfs
-$ git clone https://github.com/IcePear-Jzx/USTC-Web-Info.git
+$ git clone https://github.com/IcePear-Jzx/USTC-Web-Info.git --depth 1
 ```
+
+> Notice: Only part of data is remianed. You need to find and download complete data by yourself.
 
 ## Lab0 Web Spider
 
@@ -44,3 +47,5 @@ each line is in JSON format with `originalText` and `textId`.
 each row includes `textId`, `label_type`, `start_pos`, `end_pos`.
 
 More details: [http://staff.ustc.edu.cn/~tongxu/webinfo/slides/exp2.pdf](http://staff.ustc.edu.cn/~tongxu/webinfo/slides/exp2.pdf)
+
+## Lab3 Recommender System
