@@ -8,7 +8,7 @@
 $ git clone https://github.com/IcePear-Jzx/USTC-Web-Info.git --depth 1
 ```
 
-> Notice: Only part of data is remianed. You need to find and download complete data by yourself.
+**Notice: Only part of data is remianed. You need to find and download complete data by yourself.**
 
 ## Lab0 Web Spider
 
