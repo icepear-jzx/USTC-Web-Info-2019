@@ -1,0 +1,40 @@
+Surprise:
+
+BaselineOnly:
+                  Fold 1  Fold 2  Fold 3  Fold 4  Fold 5  Mean    Std
+RMSE (testset)    1.3666  1.3676  1.3668  1.3667  1.3660  1.3667  0.0005
+MAE (testset)     1.0270  1.0278  1.0268  1.0275  1.0267  1.0272  0.0004
+Fit time          30.43   49.50   50.81   50.24   49.94   46.18   7.89
+Test time         23.47   22.10   23.94   22.08   24.28   23.18   0.92
+
+Coclustering:
+                  Fold 1  Fold 2  Fold 3  Fold 4  Fold 5  Mean    Std
+RMSE (testset)    1.3986  1.4001  1.4017  1.3997  1.4003  1.4001  0.0010
+MAE (testset)     1.0294  1.0315  1.0341  1.0318  1.0299  1.0313  0.0017
+Fit time          219.40  225.22  227.43  228.03  234.43  226.90  4.84
+Test time         27.99   26.32   27.71   27.00   29.08   27.62   0.93
+
+KNNBaseline:
+                  Fold 1  Fold 2  Fold 3  Fold 4  Fold 5  Mean    Std
+RMSE (testset)    1.3545  1.3551  1.3548  1.3540  1.3558  1.3548  0.0006
+MAE (testset)     0.9882  0.9889  0.9883  0.9873  0.9891  0.9884  0.0006
+Fit time          701.48  721.27  812.15  693.96  692.37  724.25  45.14
+Test time         1619.66 1723.80 1912.56 1893.13 1870.28 1803.89 113.61
+
+KNNWithMeans:
+                  Fold 1  Fold 2  Fold 3  Fold 4  Fold 5  Mean    Std
+RMSE (testset)    1.3737  1.3720  1.3722  1.3722  1.3723  1.3725  0.0006
+MAE (testset)     1.0107  1.0092  1.0092  1.0087  1.0095  1.0095  0.0007
+Fit time          670.87  783.62  660.33  662.39  669.77  689.40  47.29
+Test time         1645.46 1838.68 1819.14 1823.99 1753.39 1776.13 71.62
+
+NormalPredictor:
+                  Fold 1  Fold 2  Fold 3  Fold 4  Fold 5  Mean    Std
+RMSE (testset)    2.4916  2.4942  2.4937  2.4905  2.4909  2.4922  0.0015
+MAE (testset)     2.0368  2.0395  2.0392  2.0355  2.0363  2.0375  0.0016
+Fit time          10.66   15.13   14.89   13.58   15.04   13.86   1.70
+Test time         26.32   24.05   25.64   24.15   25.66   25.16   0.90
+
+SVD:
+
+SVDpp:

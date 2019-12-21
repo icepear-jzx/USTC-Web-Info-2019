@@ -1,6 +1,7 @@
 import pickle
 import os
 from tqdm import tqdm
+import time
 
 
 path = os.path.dirname(os.path.abspath(__file__))
@@ -41,8 +42,10 @@ def format_rating():
     lines = []
 
     for line in tqdm(open(path + '/Data/train.txt', 'r').readlines()):
-        user_id, item_id, rating, time, *tags = line.strip().split(',')
-        lines.append("{} {} {}\n".format(userid2index[user_id], itemid2index[item_id], rating))
+        user_id, item_id, rating, date, *tags = line.strip().split(',')
+        timestamp = time.mktime(time.strptime(date[:19], "%Y-%m-%dT%H:%M:%S"))
+        lines.append("{},{},{},{}\n".format(userid2index[user_id], 
+            itemid2index[item_id], rating, timestamp))
     
     open(path + '/Data/train_format.txt', 'w').writelines(lines)
 
@@ -55,15 +58,15 @@ def format_contacts():
         user, contacts = line.strip().split(':')
         contacts = contacts.split(',')
         for contact in contacts: 
-            lines.append("{} {} 1\n".format(userid2index[user], userid2index[contact]))
+            lines.append("{},{},1\n".format(userid2index[user], userid2index[contact]))
     
     open(path + '/Data/contacts_format.txt', 'w').writelines(lines)
 
 
 if __name__ == "__main__":
-    id2index()
+    # id2index()
     format_rating()
-    format_contacts()
+    # format_contacts()
 
         
 
