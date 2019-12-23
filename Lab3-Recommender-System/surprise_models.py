@@ -4,6 +4,7 @@ from surprise import Reader
 from surprise.model_selection import cross_validate
 import os
 import argparse
+from tqdm import tqdm
 
 
 path = os.path.dirname(os.path.abspath(__file__))
@@ -18,29 +19,44 @@ if __name__ == "__main__":
                     'SVD', 'SVDpp', 'NMF', 'SlopeOne', 'CoClustering'])
     args = parser.parse_args()
 
-    file_path = path + '/Data/train_format.txt'
-    reader = Reader(line_format='user item rating timestamp', sep=',', rating_scale=(0, 5))
-    data = Dataset.load_from_file(file_path, reader=reader)
+    train_path = path + '/Data/train_format.txt'
+    
+    train_reader = Reader(line_format='user item rating timestamp', sep=',', rating_scale=(0, 5))
+    trainset = Dataset.load_from_file(train_path, reader=train_reader)
+    trainset = trainset.build_full_trainset()
 
     if args.model == 'NormalPredictor':
-        cross_validate(surprise.NormalPredictor(), data, cv=5, verbose=True)
+        model = surprise.NormalPredictor()
     elif args.model == 'BaselineOnly':
-        cross_validate(surprise.BaselineOnly(), data, cv=5, verbose=True)
+        model = surprise.BaselineOnly()
     elif args.model == 'KNNBasic':
-        cross_validate(surprise.KNNBasic(), data, cv=5, verbose=True)
+        model = surprise.KNNBasic()
     elif args.model == 'KNNWithMeans':
-        cross_validate(surprise.KNNWithMeans(), data, cv=5, verbose=True)
+        model = surprise.KNNWithMeans()
     elif args.model == 'KNNWithZScore':
-        cross_validate(surprise.KNNWithZScore(), data, cv=5, verbose=True)
+        model = surprise.KNNWithZScore()
     elif args.model == 'KNNBaseline':
-        cross_validate(surprise.KNNBaseline(), data, cv=5, verbose=True)
+        model = surprise.KNNBaseline()
     elif args.model == 'SVD':
-        cross_validate(surprise.SVD(), data, cv=5, verbose=True)
+        model = surprise.SVD()
     elif args.model == 'SVDpp':
-        cross_validate(surprise.SVDpp(), data, cv=5, verbose=True)
+        model = surprise.SVDpp()
     elif args.model == 'NMF':
-        cross_validate(surprise.NMF(), data, cv=5, verbose=True)
+        model = surprise.NMF()
     elif args.model == 'SlopeOne':
-        cross_validate(surprise.SlopeOne(), data, cv=5, verbose=True)
+        model = surprise.SlopeOne()
     elif args.model == 'CoClustering':
-        cross_validate(surprise.CoClustering(), data, cv=5, verbose=True)
+        model = surprise.CoClustering()
+
+    # cross_validate(model, trainset, cv=5, verbose=True)
+    model.fit(trainset)
+
+    lines = []
+    test_path = path + '/Data/test_format.txt'
+    for line in tqdm(open(test_path, 'r').readlines()):
+        user_id, item_id, timestamp, *tags = line.strip().split(',')
+        rating = model.predict(user_id, item_id).est
+        lines.append("{:.5}\n".format(rating))
+    
+    open(path + '/Data/submit.txt', 'w').writelines(lines)
+

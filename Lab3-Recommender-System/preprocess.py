@@ -36,18 +36,30 @@ def id2index():
     pickle.dump(itemid2index, open(path + '/Data/itemid2index.pkl', 'wb'))
 
 
-def format_rating():
-    userid2index = pickle.load(open(path + '/Data/userid2index.pkl', 'rb'))
-    itemid2index = pickle.load(open(path + '/Data/itemid2index.pkl', 'rb'))
+def format_trainset():
+    # userid2index = pickle.load(open(path + '/Data/userid2index.pkl', 'rb'))
+    # itemid2index = pickle.load(open(path + '/Data/itemid2index.pkl', 'rb'))
     lines = []
 
     for line in tqdm(open(path + '/Data/train.txt', 'r').readlines()):
         user_id, item_id, rating, date, *tags = line.strip().split(',')
         timestamp = time.mktime(time.strptime(date[:19], "%Y-%m-%dT%H:%M:%S"))
-        lines.append("{},{},{},{}\n".format(userid2index[user_id], 
-            itemid2index[item_id], rating, timestamp))
+        lines.append("{},{},{},{}\n".format(user_id, item_id, rating, timestamp))
     
     open(path + '/Data/train_format.txt', 'w').writelines(lines)
+
+
+def format_testset():
+    # userid2index = pickle.load(open(path + '/Data/userid2index.pkl', 'rb'))
+    # itemid2index = pickle.load(open(path + '/Data/itemid2index.pkl', 'rb'))
+    lines = []
+
+    for line in tqdm(open(path + '/Data/test.txt', 'r').readlines()):
+        user_id, item_id, date, *tags = line.strip().split(',')
+        timestamp = time.mktime(time.strptime(date[:19], "%Y-%m-%dT%H:%M:%S"))
+        lines.append("{},{},{}\n".format(user_id, item_id, timestamp))
+    
+    open(path + '/Data/test_format.txt', 'w').writelines(lines)
 
 
 def format_contacts():
@@ -65,7 +77,8 @@ def format_contacts():
 
 if __name__ == "__main__":
     # id2index()
-    format_rating()
+    format_trainset()
+    format_testset()
     # format_contacts()
 
         
