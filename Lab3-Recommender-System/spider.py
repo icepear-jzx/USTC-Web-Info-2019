@@ -37,6 +37,9 @@ def get_html(url, sleep=True, proxy=None):
             else:
                 put_back = True
                 break
+    
+    if len(proxy_list) == 0:
+        print('Warning! Proxies Remain:', len(proxy_list))
 
     try:
         # print('Get:', url)
@@ -81,9 +84,6 @@ def get_html(url, sleep=True, proxy=None):
     
     if put_back:
         proxy_list.append(proxy)
-    
-    if len(proxy_list) == 0:
-        print('Warning! Proxies Remain:', len(proxy_list))
 
     return html
 
@@ -137,6 +137,11 @@ def get_movie(args):
     if not html:
         print("jump:", user)
         return
+    if "paginator" not in html:
+        # print('Spider Trap:', url)
+        print("jump:", user)
+        return
+    
     selector = etree.HTML(html)
     num = int(selector.xpath('//span[@class="subject-num"]/text()')[0].split('/')[1])
     start = (num // 30) * 30
@@ -147,17 +152,26 @@ def get_movie(args):
     while True:
         url = 'https://movie.douban.com/people/{}/collect?sort=time&amp;start={}&amp;filter=all&amp;mode=list&amp;tags_sort=count'.format(user, start)
         html = get_html(url, sleep=False) # html != None
+        while "paginator" not in html:
+            # print('Spider Trap:', url)
+            html = get_html(url, sleep=False)
         selector = etree.HTML(html)
-        book_urls = selector.xpath('//div[@class="item-show"]/div[@class="date"]/span/../../div[@class="title"]/a/@href')
-        book_ids = [book_url.split('/')[-2] for book_url in book_urls]
+        movie_all_urls = selector.xpath('//div[@class="item-show"]/div[@class="title"]/a/@href')
+        movie_all_ids = [movie_url.split('/')[-2] for movie_url in movie_all_urls]
+        movie_urls = selector.xpath('//div[@class="item-show"]/div[@class="date"]/span/../../div[@class="title"]/a/@href')
+        movie_ids = [movie_url.split('/')[-2] for movie_url in movie_urls]
         rating_tags = selector.xpath('//div[@class="item-show"]/div[@class="date"]/span/@class')
         ratings = [tag[-3] for tag in rating_tags]
         dates = selector.xpath('//div[@class="item-show"]/div[@class="date"]/span/../../div[@class="date"]/text()')
         dates = [date.strip() for date in dates if '20' in date]
         
 
-        for i in range(len(book_ids)):
-            rating_dict[book_ids[i]] = {'rating': ratings[i], 'date': dates[i]}
+        for i in range(len(movie_ids)):
+            rating_dict[movie_ids[i]] = {'rating': ratings[i], 'date': dates[i]}
+        
+        for movie_id in movie_all_ids:
+            if movie_id not in movie_ids:
+                rating_dict[movie_id] = {'rating': "0", 'date': "NaN"}
 
         start -= 30
         if start < 0 or (dates and dates[0][:4] > '2011'):
@@ -189,7 +203,7 @@ if __name__ == "__main__":
     userlist.sort()
 
     userlist_got = [filename[:-5] for filename in os.listdir(path + '/Data/Movie')]
-    # userlist_got += ['1060618', '1387941', '1316947', '1211818', '1237639', '1240071']
+
     input(str(len(userlist_got)) + '/' + str(len(userlist)))
         
     get_movies(userlist, userlist_got)
