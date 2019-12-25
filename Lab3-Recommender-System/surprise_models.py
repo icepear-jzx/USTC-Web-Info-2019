@@ -40,7 +40,7 @@ if __name__ == "__main__":
     elif args.model == 'SVD':
         model = surprise.SVD()
     elif args.model == 'SVDpp':
-        model = surprise.SVDpp()
+        model = surprise.SVDpp(verbose=True)
     elif args.model == 'NMF':
         model = surprise.NMF()
     elif args.model == 'SlopeOne':
@@ -56,7 +56,7 @@ if __name__ == "__main__":
     for line in tqdm(open(test_path, 'r').readlines()):
         user_id, item_id, timestamp, *tags = line.strip().split(',')
         rating = model.predict(user_id, item_id).est
-        lines.append("{:.5}\n".format(rating))
+        lines.append("{:.5}\n".format(float(rating)))
     
     open(path + '/Data/submit.txt', 'w').writelines(lines)
 
