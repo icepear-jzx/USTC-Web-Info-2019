@@ -40,6 +40,8 @@ def get_html(url, sleep=True, proxy=None):
     
     if len(proxy_list) == 0:
         print('Warning! Proxies Remain:', len(proxy_list))
+        if random.random() < 0.001:
+            exit()
 
     try:
         # print('Get:', url)

@@ -58,7 +58,7 @@ def test():
 
 def fuse():
 
-    userlist_got = [filename[:-5] for filename in os.listdir(path + '/Data/Test')]
+    userlist_got = [filename[:-5] for filename in os.listdir(path + '/Data/Movie')]
 
     rating_lines = open(path + '/Data/svd-0.9499-1.3412.txt').readlines()
 
@@ -71,7 +71,7 @@ def fuse():
         user_id, item_id, time, *tags = test_lines[i].strip().split(',')
         if user_id != now_user:
             if user_id in userlist_got:
-                now_movies = json.load(open(path + '/Data/Test/{}.json'.format(user_id)))
+                now_movies = json.load(open(path + '/Data/Movie/{}.json'.format(user_id)))
                 now_user = user_id
             else:
                 continue
@@ -83,3 +83,4 @@ def fuse():
 
 
 fuse()
+# test()

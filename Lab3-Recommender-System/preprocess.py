@@ -77,9 +77,18 @@ def format_contacts():
 
 if __name__ == "__main__":
     # id2index()
-    format_trainset()
-    format_testset()
+    # format_trainset()
+    # format_testset()
     # format_contacts()
+
+    # user_ids = set()
+
+    # for line in tqdm(open(path + '/Data/test.txt', 'r').readlines()):
+    #     user_id, item_id, time = line.strip().split(',')[:3]
+    #     user_ids |= set([user_id])
+
+    # user_ids = list(user_ids)
+    # pickle.dump(user_ids, open(path + '/Data/userlist.pkl', 'wb'))
 
         
 
