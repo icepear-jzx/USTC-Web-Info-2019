@@ -37,11 +37,6 @@ def get_html(url, sleep=True, proxy=None):
             else:
                 put_back = True
                 break
-    
-    if len(proxy_list) == 0:
-        print('Warning! Proxies Remain:', len(proxy_list))
-        if random.random() < 0.001:
-            exit()
 
     try:
         # print('Get:', url)
@@ -67,66 +62,94 @@ def get_html(url, sleep=True, proxy=None):
     except urllib.error.HTTPError as e:
         # print('HTTPError:', url, e)
         if '404' in str(e):
-            print('404:', url)
+            # print('404:', url)
             html = None
         elif '403' in str(e):
-            print('403:', url)
-            html = get_html(url, sleep=False)
+            # print('403:', url)
             print('Delete:', proxy)
             put_back = False
+            html = get_html(url, sleep=False)
     except Exception as e:
         # print(e, proxy, url)
-        html = get_html(url, sleep=False)
         if random.random() < 0.01:
             print('Delete:', proxy)
             put_back = False
+        html = get_html(url, sleep=False)
     else:
         # print('Success:', url)
         pass
     
     if put_back:
         proxy_list.append(proxy)
+    else:
+        print('Proxies Remain:', len(proxy_list))
 
     return html
 
 
-def get_books(userlist, last_user):
+def get_book(args):
+
+    user, = args
     
-    for user in tqdm(userlist):
-        if user <= last_user:
-            continue
+    rating_dict = {}
+    url = 'https://book.douban.com/people/{}/collect?sort=time&start=0&filter=all&mode=list'.format(user)
+    html = get_html(url, sleep=False)
+    if not html:
+        print("jump:", user)
+        return
+    if "paginator" not in html:
+        # print('Spider Trap:', url)
+        print("jump:", user)
+        return
 
-        rating_dict = {}
-        url = 'https://book.douban.com/people/{}/collect?sort=time&start=0&filter=all&mode=list'.format(user)
-        html = get_html(url)
+    selector = etree.HTML(html)
+    num = int(selector.xpath('//span[@class="subject-num"]/text()')[0].split('/')[1])
+    start = (num // 30) * 30
+    if start > 5000:
+        print("jump:", user)
+        continue
+    
+    while True:
+        url = 'https://book.douban.com/people/{}/collect?sort=time&start={}&filter=all&mode=list'.format(user, start)
+        html = get_html(url, sleep=False)
+        while "paginator" not in html:
+            # print('Spider Trap:', url)
+            html = get_html(url, sleep=False)
         selector = etree.HTML(html)
-        num = int(selector.xpath('//span[@class="subject-num"]/text()')[0].split('/')[1])
-        start = (num // 30) * 30
-        if start > 3000:
-            print("jump:", user)
-            continue
+        book_all_urls = selector.xpath('//div[@class="item-show"]/div[@class="title"]/a/@href')
+        book_all_ids = [book_url.split('/')[-2] for book_url in book_all_urls]
+        book_urls = selector.xpath('//div[@class="item-show"]/div[@class="date"]/span/../../div[@class="title"]/a/@href')
+        book_ids = [book_url.split('/')[-2] for book_url in book_urls]
+        rating_tags = selector.xpath('//div[@class="item-show"]/div[@class="date"]/span/@class')
+        ratings = [tag[-3] for tag in rating_tags]
+        dates = selector.xpath('//div[@class="item-show"]/div[@class="date"]/span/../../div[@class="date"]/text()')
+        dates = [date.strip() for date in dates if '20' in date]
         
-        while True:
-            url = 'https://book.douban.com/people/{}/collect?sort=time&start={}&filter=all&mode=list'.format(user, start)
-            html = get_html(url)
-            selector = etree.HTML(html)
-            book_urls = selector.xpath('//div[@class="item-show"]/div[@class="date"]/span/../../div[@class="title"]/a/@href')
-            book_ids = [book_url.split('/')[-2] for book_url in book_urls]
-            rating_tags = selector.xpath('//div[@class="item-show"]/div[@class="date"]/span/@class')
-            ratings = [tag[-3] for tag in rating_tags]
-            dates = selector.xpath('//div[@class="item-show"]/div[@class="date"]/span/../../div[@class="date"]/text()')
-            dates = [date.strip() for date in dates if '20' in date]
-            
 
-            for i in range(len(book_ids)):
-                rating_dict[book_ids[i]] = {'rating': ratings[i], 'date': dates[i]}
+        for i in range(len(book_ids)):
+            rating_dict[book_ids[i]] = {'rating': ratings[i], 'date': dates[i]}
 
-            start -= 30
-            if start < 0 or (dates and dates[0][:4] > '2011'):
-                break
+        for book_id in book_all_ids:
+            if book_id not in book_ids:
+                rating_dict[book_id] = {'rating': "0", 'date': "NaN"}
 
-        with open(path + '/Data/Book/{}.json'.format(user), 'w') as f:
-            json.dump(rating_dict, f, indent=4, ensure_ascii=False)
+        start -= 30
+        if start < 0 or (dates and dates[0][:4] > '2011'):
+            break
+
+    with open(path + '/Data/Book/{}.json'.format(user), 'w') as f:
+        json.dump(rating_dict, f, indent=4, ensure_ascii=False)
+
+    print('Finish:', user)
+    
+
+def get_books(userlist, userlist_got):
+
+    args = [(user, ) for user in userlist if user not in userlist_got]
+    pool = mp.Pool(30)
+    pool.map(get_movie, args)
+    pool.close()
+    pool.join()
 
 
 def get_movie(args):
@@ -147,7 +170,7 @@ def get_movie(args):
     selector = etree.HTML(html)
     num = int(selector.xpath('//span[@class="subject-num"]/text()')[0].split('/')[1])
     start = (num // 30) * 30
-    if start > 2000:
+    if start > 5000:
         print("jump:", user)
         return
     
@@ -205,12 +228,9 @@ if __name__ == "__main__":
     userlist.sort()
 
     userlist_got = [filename[:-5] for filename in os.listdir(path + '/Data/Movie')]
-
     input(str(len(userlist_got)) + '/' + str(len(userlist)))
-        
     get_movies(userlist, userlist_got)
 
-    # book_last_user = '1015582'
     # get_books(userlist, book_last_user)
 
     
