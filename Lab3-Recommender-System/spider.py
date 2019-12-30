@@ -47,7 +47,7 @@ def get_html(url, sleep=True, proxy=None):
         opener = urllib.request.build_opener(proxy_handler, cookie_handler)
         header = random.choice(headers)
 
-        req = urllib.request.Request('https://book.douban.com/', headers=header)
+        req = urllib.request.Request('https://www.douban.com/', headers=header)
         html = opener.open(req, timeout=5)
 
         cookie = ""
@@ -107,7 +107,7 @@ def get_book(args):
     start = (num // 30) * 30
     if start > 5000:
         print("jump:", user)
-        continue
+        return
     
     while True:
         url = 'https://book.douban.com/people/{}/collect?sort=time&start={}&filter=all&mode=list'.format(user, start)
@@ -141,13 +141,13 @@ def get_book(args):
         json.dump(rating_dict, f, indent=4, ensure_ascii=False)
 
     print('Finish:', user)
-    
+
 
 def get_books(userlist, userlist_got):
 
     args = [(user, ) for user in userlist if user not in userlist_got]
     pool = mp.Pool(30)
-    pool.map(get_movie, args)
+    pool.map(get_book, args)
     pool.close()
     pool.join()
 
@@ -227,10 +227,12 @@ if __name__ == "__main__":
     userlist = pickle.load(open(path + '/Data/userlist.pkl', 'rb'))
     userlist.sort()
 
-    userlist_got = [filename[:-5] for filename in os.listdir(path + '/Data/Movie')]
-    input(str(len(userlist_got)) + '/' + str(len(userlist)))
-    get_movies(userlist, userlist_got)
+    # userlist_got = [filename[:-5] for filename in os.listdir(path + '/Data/Movie')]
+    # input(str(len(userlist_got)) + '/' + str(len(userlist)))
+    # get_movies(userlist, userlist_got)
 
-    # get_books(userlist, book_last_user)
+    userlist_got = [filename[:-5] for filename in os.listdir(path + '/Data/Book')]
+    input(str(len(userlist_got)) + '/' + str(len(userlist)))
+    get_books(userlist, userlist_got)
 
     

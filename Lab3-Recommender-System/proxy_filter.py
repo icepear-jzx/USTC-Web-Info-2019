@@ -23,7 +23,7 @@ def test_proxy(proxy):
         httpproxy_handler = urllib.request.ProxyHandler(proxy)
         opener = urllib.request.build_opener(httpproxy_handler)
         req = urllib.request.Request(url, headers=random.choice(headers))
-        for _ in range(5):
+        for _ in range(1):
             html = opener.open(req, timeout=5).read().decode()
     except:
         print('Fail.')
