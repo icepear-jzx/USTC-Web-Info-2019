@@ -19,4 +19,51 @@ $ pip3 install -r requirements.txt
 
 ## Usage
 
+### 1. Preprocess
+
+You have to preprocess raw data `train.txt` and `test.txt` for CRF model.
+You will get `train_word.txt` and `test_word.txt` after running this:
+
+```shell
+$ python3 preprocess.py
+```
+
+### 2. Rules
+
+Recognize entities based on rules. 
+You can edit `manual-rules.txt` to add rules.
+Then run:
+
+```shell
+$ python3 rule.py
+```
+
+You will get `auto-rules.txt` and `rule.csv`.
+
+### 3. CRF
+
+Use CRF model to recognize entities:
+
+```shell
+$ python3 crf.py
+```
+
+You can get `submit.csv` as the result based on CRF model.
+
+### 4. Fusion
+
+Fuse `rule.csv` and `submit.csv`:
+
+```shell
+$ python3 fuse.py
+```
+
+You will get `fuse.csv` as finial result in `Data/`. 
+
+### 5. Results
+
+You can see my results and scores in `Data/`.
+
 ## Explanation
+
+My report: [report-lab2.pdf](./report-lab2.pdf).

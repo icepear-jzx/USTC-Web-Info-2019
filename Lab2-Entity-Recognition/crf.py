@@ -3,7 +3,6 @@ import os
 from tqdm import tqdm
 import sys
 import pandas as pd
-import test
 
 
 path = os.path.dirname(os.path.abspath(__file__))

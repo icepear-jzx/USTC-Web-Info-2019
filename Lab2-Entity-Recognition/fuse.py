@@ -3,11 +3,10 @@ import json
 import pandas as pd
 
 
-
 path = os.path.dirname(os.path.abspath(__file__))
 
 rule = pd.read_csv(path + '/Data/rule.csv')
-submit = pd.read_csv(path + '/Data/submit6.csv')
+submit = pd.read_csv(path + '/Data/submit.csv')
 tests = json.loads(open(path + '/Data/test.json').read())
 fuse = {'textId':[], 'label_type':[], 'start_pos':[], 'end_pos':[]}
 punctuations = [' ', '+', '，', '-', '：', '、', '.', '；', '。', '？', '/', '*', '\\']
@@ -26,10 +25,6 @@ for textId in range(600):
         label_type = submit_labels[i]
         start_pos = submit_starts[i]
         end_pos = submit_ends[i]
-        # for j in range(len(rule_labels)):
-        #     if start_pos < rule_ends[j] and end_pos > rule_starts[j]:
-        #         break
-        # else:
         entity = tests[textId]['originalText'][start_pos:end_pos]
         if entity[0] not in punctuations and \
                 entity[-1] not in punctuations and \
@@ -56,5 +51,3 @@ for textId in range(600):
 
 fuse = pd.DataFrame(fuse).drop_duplicates()
 fuse.to_csv(path + '/Data/fuse.csv', index=False)
-
-
