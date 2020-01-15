@@ -49,3 +49,8 @@ each row includes `textId`, `label_type`, `start_pos`, `end_pos`.
 More details: [http://staff.ustc.edu.cn/~tongxu/webinfo/slides/exp2.pdf](http://staff.ustc.edu.cn/~tongxu/webinfo/slides/exp2.pdf)
 
 ## Lab3 Recommender System
+
+The data comes from ratings of films and books on douban. 
+Judge the user preference according to the user rating information in the training data, and score the user-item pairs in the test data.
+
+More details: [http://staff.ustc.edu.cn/~tongxu/webinfo/slides/exp3.pdf](http://staff.ustc.edu.cn/~tongxu/webinfo/slides/exp3.pdf)
